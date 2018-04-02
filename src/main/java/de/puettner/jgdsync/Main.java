@@ -24,7 +24,7 @@ public class Main {
 
     public static void main(String[] args) {
         printLogStatusInfo();
-        boolean useMock = false;
+        boolean useMock = true;
         DriveService gdService = DriveServiceBuilder.build(useMock, true);
         // Drive.Apps apps = drive.apps();
         new JGDSync(gdService).processCmdOptions(args);

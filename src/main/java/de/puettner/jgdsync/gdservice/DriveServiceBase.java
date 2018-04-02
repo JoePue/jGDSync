@@ -21,8 +21,8 @@ public class DriveServiceBase {
         this.drive = drive;
     }
 
-    protected FileList loadCachedResponse( int callStackIdx, String hashCode) {
-        log.trace(new Object(){}.getClass().getEnclosingMethod().getName());
+    protected FileList getFiles(int callStackIdx, String hashCode) {
+        log.trace("getFiles");
         try {
             String content = FileUtils.readFileToString(newFile(++callStackIdx, hashCode), Charset.forName("UTF-8"));
             return factory.createJsonParser(content).parse(FileList.class);

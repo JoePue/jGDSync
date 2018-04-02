@@ -15,18 +15,27 @@ public class DriveServiceMock extends DriveServiceBase implements DriveService {
     }
 
     @Override
-    public FileList list(File q) {
+    public FileList listFoldersAndFile(File q) {
         FileList result;
-        if ((result = loadCachedResponse(0, q.getId())) != null) {
+        if ((result = getFiles(0, q.getId())) != null) {
             return result;
         }
-        return null;
+        return getCachedResponse2(0, q.getId());
     }
 
     @Override
-    public FileList listRootFiles() {
+    public FileList listAllFoldersAndFiles() {
+        return getCachedResponse2(0, null);
+    }
+
+    @Override
+    public FileList listRootFoldersAndFiles() {
+        return getCachedResponse2(0, null);
+    }
+
+    private FileList getCachedResponse2(int callStackIdx, String hashCode) {
         FileList result;
-        if ((result = loadCachedResponse(0, null)) != null) {
+        if ((result = getFiles(++callStackIdx, hashCode)) != null) {
             return result;
         }
         return null;
