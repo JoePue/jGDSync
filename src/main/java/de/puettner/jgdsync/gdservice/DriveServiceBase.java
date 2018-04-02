@@ -6,6 +6,7 @@ import com.google.api.services.drive.model.FileList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
@@ -20,10 +21,10 @@ public class DriveServiceBase {
         this.drive = drive;
     }
 
-    protected FileList loadCachedResponse(java.io.File file) {
-        log.debug(new Object(){}.getClass().getEnclosingMethod().getName());
+    protected FileList loadCachedResponse( int callStackIdx, String hashCode) {
+        log.trace(new Object(){}.getClass().getEnclosingMethod().getName());
         try {
-            String content = FileUtils.readFileToString(file, Charset.forName("UTF-8"));
+            String content = FileUtils.readFileToString(newFile(++callStackIdx, hashCode), Charset.forName("UTF-8"));
             return factory.createJsonParser(content).parse(FileList.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -31,18 +32,19 @@ public class DriveServiceBase {
         return null;
     }
 
-    protected  <T extends com.google.api.client.json.GenericJson> T cacheReponse(T result, java.io.File file) {
+    protected  <T extends com.google.api.client.json.GenericJson> T cacheReponse(T result, int callStackIdx, String hashCode) {
         log.debug(new Object(){}.getClass().getEnclosingMethod().getName());
         try {
-            FileUtils.write((file), factory.toPrettyString(result), Charset.forName("UTF-8"), false);
+            FileUtils.write((newFile(++callStackIdx, hashCode)), factory.toPrettyString(result), Charset.forName("UTF-8"), false);
         } catch (IOException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    protected java.io.File newFile(String name) {
-        return  new java.io.File(name + ".json");
+    protected java.io.File newFile(int idx, String hashCode) {
+        String methodName = new Throwable().getStackTrace()[++idx].getMethodName();
+        return  new java.io.File("reponses" + File.separator + methodName + (hashCode != null ? "_" + hashCode : "") + ".json");
     }
 
 }

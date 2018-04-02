@@ -9,7 +9,7 @@ public class DriveServiceBuilder {
         if (useMock) {
             return new DriveServiceMock();
         } else {
-            return new DriveServiceImpl(DriveBuilder.build(), true);
+            return new DriveServiceImpl(DriveBuilder.build(), logReponses);
         }
 
     }

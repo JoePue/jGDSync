@@ -1,24 +1,38 @@
 group 'de.puettner'
-// artefactid 'jgdsync'
 version '1.0-SNAPSHOT'
+buildDir = 'target'
 
 apply plugin: 'java'
 apply plugin: 'application'
 
+//create a single Jar with all dependencies
+task fatJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File Example',
+                'Implementation-Version': version,
+                'Main-Class': 'de.puettner.jgdsync.Main'
+    }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 version = '1.0'
 
-
+// Get dependencies from Maven central repository
 repositories {
     mavenCentral()
 }
 
+// Project dependencies
 dependencies {
+    //
     compile 'com.google.api-client:google-api-client:1.23.0'
     compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
-    compile 'com.google.apis:google-api-services-drive:v2-rev303-1.23.0'
+    compile 'com.google.apis:google-api-services-drive:v3-rev108-1.23.0'
+
     compile "org.slf4j:slf4j-api:1.7.21"
     compile "org.projectlombok:lombok:1.16.8"
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
