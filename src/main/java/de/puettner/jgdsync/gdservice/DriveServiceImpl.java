@@ -4,6 +4,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import de.puettner.jgdsync.AppException;
+import de.puettner.jgdsync.gdservice.command.AppConfig;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -19,8 +20,8 @@ public class DriveServiceImpl extends DriveServiceBase implements DriveService {
 
     private final boolean logResponses;
 
-    public DriveServiceImpl(Drive drive, boolean logResponses) {
-        super(drive);
+    public DriveServiceImpl(Drive drive, boolean logResponses, AppConfig appConfig) {
+        super(drive, appConfig);
         this.logResponses = logResponses;
     }
 

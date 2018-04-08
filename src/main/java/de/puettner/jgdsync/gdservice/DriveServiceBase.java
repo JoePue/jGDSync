@@ -3,6 +3,7 @@ package de.puettner.jgdsync.gdservice;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.FileList;
+import de.puettner.jgdsync.gdservice.command.AppConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -10,15 +11,23 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import static de.puettner.jgdsync.AppConstants.CACHE_DIR;
+
 @Slf4j
 public class DriveServiceBase {
 
     private JacksonFactory factory = JacksonFactory.getDefaultInstance();
 
     protected final Drive drive;
+    private AppConfig appConfig;
 
-    protected DriveServiceBase(Drive drive){
+    protected DriveServiceBase(Drive drive, AppConfig appConfig){
+        this.appConfig = appConfig;
         this.drive = drive;
+    }
+
+    public void setAppConfig(AppConfig appConfig) {
+        this.appConfig = appConfig;
     }
 
     protected FileList getFiles(int callStackIdx, String hashCode) {
@@ -44,7 +53,7 @@ public class DriveServiceBase {
 
     protected java.io.File newFile(int idx, String hashCode) {
         String methodName = new Throwable().getStackTrace()[++idx].getMethodName();
-        return  new java.io.File("reponses" + File.separator + methodName + (hashCode != null ? "_" + hashCode : "") + ".json");
+        return  new java.io.File(CACHE_DIR + File.separator + methodName + (hashCode != null ? "_" + hashCode : "") + ".json");
     }
 
 }

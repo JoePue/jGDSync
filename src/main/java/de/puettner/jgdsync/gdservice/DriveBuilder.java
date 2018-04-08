@@ -13,7 +13,7 @@ import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import de.puettner.jgdsync.AppException;
-import de.puettner.jgdsync.JGDSync;
+import de.puettner.jgdsync.gdservice.command.CommandExecutor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -69,7 +69,7 @@ public class DriveBuilder  {
      */
     public static Credential authorize() throws IOException {
         // Load client secrets.
-        InputStream in = JGDSync.class.getResourceAsStream("/client_secret.json");
+        InputStream in = CommandExecutor.class.getResourceAsStream("/client_secret.json");
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
         // Build flow and trigger user authorization request.

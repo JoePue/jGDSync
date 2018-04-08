@@ -2,9 +2,12 @@ package de.puettner.jgdsync;
 
 import de.puettner.jgdsync.gdservice.DriveService;
 import de.puettner.jgdsync.gdservice.DriveServiceBuilder;
+import de.puettner.jgdsync.gdservice.command.AppConfig;
+import de.puettner.jgdsync.gdservice.command.AppConfigBuilder;
+import de.puettner.jgdsync.gdservice.command.CommandExecutor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.logging.Logger;
+import static de.puettner.jgdsync.gdservice.MessagePrinter.out;
 
 /**
  * https://developers.google.com/drive/v2/web/quickstart/java
@@ -17,34 +20,19 @@ import java.util.logging.Logger;
  *      https://developers.google.com/api-client-library/java/google-http-java-client/json
  *      #JacksonFactory #GsonFactory
  *      #HTTP Unit Testing
- *
  */
 @Slf4j
 public class Main {
 
+    public static final boolean useMock = true;
+    public static final boolean logResponses = true;
+
     public static void main(String[] args) {
-        printLogStatusInfo();
-        boolean useMock = true;
-        DriveService gdService = DriveServiceBuilder.build(useMock, true);
-        // Drive.Apps apps = drive.apps();
-        new JGDSync(gdService).processCmdOptions(args);
+        AppConfig appConfig = AppConfigBuilder.build();
+        if (AppConfigBuilder.validate(appConfig)){
+            out("App configuration is invalid");
+        }
+        DriveService gdService = DriveServiceBuilder.build(useMock, logResponses, appConfig);
+        new CommandExecutor(gdService).processCmdOptions(args);
     }
-
-    private static void printLogStatusInfo() {
-        log.error("error");
-        log.warn("warn");
-        log.info("info");
-        log.debug("debug");
-        log.trace("trace");
-        System.out.printf("isDebugEnabled: %s, isErrorEnabled: %s, isInfoEnabled: %s, isTraceEnabled: %s, isWarnEnabled: %s %n", log.isDebugEnabled(), log.isErrorEnabled(), log.isInfoEnabled(), log.isTraceEnabled(), log.isWarnEnabled());
-
-        Logger logger = Logger.getLogger(Main.class.getSimpleName());
-        logger.severe("severe");
-        logger.warning("warning");
-        logger.info("info");
-        logger.fine("fine");
-        logger.finer("finer");
-        logger.finest("finest");
-    }
-
 }
