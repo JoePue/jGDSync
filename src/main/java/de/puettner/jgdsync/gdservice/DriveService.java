@@ -3,14 +3,16 @@ package de.puettner.jgdsync.gdservice;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import de.puettner.jgdsync.gdservice.command.AppConfig;
+import de.puettner.jgdsync.model.Node;
+import de.puettner.jgdsync.model.SyncNode;
 
 public interface DriveService {
 
-    FileList listAllFoldersAndFiles();
+    FileList listAll();
 
-    FileList listRootFoldersAndFiles();
+    Node<SyncNode> listRootFolder();
 
-    FileList listFoldersAndFile(File q);
+    FileList listFolder(File q);
 
     void setAppConfig(AppConfig appConfig);
 }

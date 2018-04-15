@@ -26,30 +26,25 @@ import java.util.List;
  * Source {@See https://developers.google.com/drive/v2/web/quickstart/java}
  */
 @Slf4j
-public class DriveBuilder  {
+public class DriveBuilder {
 
     /** Application name. */
     private static final String APPLICATION_NAME = "jGDSync";
 
     /** Directory to store user credentials for this application. */
-    private static final java.io.File DATA_STORE_DIR = new java.io.File(System.getProperty("user.home"), "" +
-            ".credentials/jGDSync");
-
-    /** Global instance of the {@link FileDataStoreFactory}. */
-    private static FileDataStoreFactory DATA_STORE_FACTORY;
-
+    private static final java.io.File DATA_STORE_DIR = new java.io.File(System.getProperty("user.home"), "" + ".credentials/jGDSync");
     /** Global instance of the JSON factory. */
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-
-    /** Global instance of the HTTP transport. */
-    private static HttpTransport HTTP_TRANSPORT;
-
     /**
      * Global instance of the scopes required by this quickstart.
      * <p>
      * If modifying these scopes, delete your previously saved credentials at ~/.credentials/jGDSync
      */
     private static final List<String> SCOPES = Arrays.asList(DriveScopes.DRIVE_METADATA_READONLY);
+    /** Global instance of the {@link FileDataStoreFactory}. */
+    private static FileDataStoreFactory DATA_STORE_FACTORY;
+    /** Global instance of the HTTP transport. */
+    private static HttpTransport HTTP_TRANSPORT;
 
     static {
         try {
@@ -59,6 +54,22 @@ public class DriveBuilder  {
             t.printStackTrace();
             System.exit(1);
         }
+    }
+
+    /**
+     * Build and return an authorized Drive client service.
+     *
+     * @return an authorized Drive client service
+     * @throws IOException
+     */
+    public static Drive build() {
+        Credential credential = null;
+        try {
+            credential = authorize();
+        } catch (IOException e) {
+            throw new AppException(e);
+        }
+        return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
     }
 
     /**
@@ -78,22 +89,6 @@ public class DriveBuilder  {
         Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
         System.out.println("Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
         return credential;
-    }
-
-    /**
-     * Build and return an authorized Drive client service.
-     *
-     * @return an authorized Drive client service
-     * @throws IOException
-     */
-    public static Drive build() {
-        Credential credential = null;
-        try {
-            credential = authorize();
-        } catch (IOException e) {
-            throw new AppException(e);
-        }
-        return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
     }
 
 }

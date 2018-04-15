@@ -4,7 +4,10 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import de.puettner.jgdsync.AppException;
+import de.puettner.jgdsync.DriveFileUtil;
 import de.puettner.jgdsync.gdservice.command.AppConfig;
+import de.puettner.jgdsync.model.Node;
+import de.puettner.jgdsync.model.SyncNode;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -20,29 +23,53 @@ public class DriveServiceImpl extends DriveServiceBase implements DriveService {
 
     private final boolean logResponses;
 
-    public DriveServiceImpl(Drive drive, boolean logResponses, AppConfig appConfig) {
-        super(drive, appConfig);
+    public DriveServiceImpl(Drive drive, boolean logResponses, AppConfig appConfig, Node<SyncNode> rootNode) {
+        super(drive, appConfig, rootNode);
         this.logResponses = logResponses;
     }
 
+    /**
+     * Lists all folders and files.
+     *
+     * @return
+     */
     @Override
-    public FileList listAllFoldersAndFiles() {
+    public FileList listAll() {
         String q = "trashed=false and (not mimeType contains 'application/vnd.google-apps' " +
                 "or mimeType = '" + FOLDER_MIME_TYPE + "')";
         return list(q, 0, null);
     }
 
+    /**
+     * Lists all folders and files within the root folder.
+     *
+     * @return
+     */
     @Override
-    public FileList listRootFoldersAndFiles() {
+    public Node<SyncNode> listRootFolder() {
+        if (rootNode.getData().isGdFileLoaded()) {
+            return rootNode;
+        }
         String q = "'root' in parents and trashed=false and (not mimeType contains 'application/vnd.google-apps' " +
                 "or mimeType = '" + FOLDER_MIME_TYPE + "')";
-        return list(q, 0, null);
+
+        FileList fileList = list(q, 0, null);
+        return super.fileList2NodeList(fileList);
     }
 
+    /**
+     * Lists all folders and files within a provided folder.
+     *
+     * @param folder
+     * @return
+     */
     @Override
-    public FileList listFoldersAndFile(File file) {
-        String q = MessageFormat.format("''{0}'' in parents and trashed=false ", file.getId());
-        return list(q, 0, file.getId());
+    public FileList listFolder(File folder) {
+        String q = MessageFormat.format("''{0}'' in parents and trashed=false ", folder.getId());
+        if (!DriveFileUtil.isFolder(folder)) {
+            throw new IllegalArgumentException("Wrong Mimetype");
+        }
+        return list(q, 0, folder.getId());
     }
 
     private FileList list(String q, int callStackIdx, String hashCode) {

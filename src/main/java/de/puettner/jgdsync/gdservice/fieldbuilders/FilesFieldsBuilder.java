@@ -4,22 +4,6 @@ import static de.puettner.jgdsync.gdservice.fieldbuilders.FilesFieldsBuilder.Fil
 
 public class FilesFieldsBuilder<FileField> extends FieldBuilderBase {
 
-    public enum FileField {
-        any(""),
-        id(""),
-        kind(""),
-        mimeType(""),
-        name(""),
-        parents(""),
-        createdTime(""),
-        modifiedTime("");
-        public final String label;
-
-        FileField(String label) {
-            this.label = label;
-        }
-    }
-
     private FilesFieldsBuilder() {}
 
     public static FilesFieldsBuilder create() {
@@ -34,6 +18,22 @@ public class FilesFieldsBuilder<FileField> extends FieldBuilderBase {
     public FilesFieldsBuilder add(FileField field) {
         fieldList.add(field);
         return this;
+    }
+
+    public enum FileField {
+        any(""),
+        id(""),
+        kind(""),
+        mimeType(""),
+        name(""),
+        parents(""),
+        createdTime(""),
+        modifiedTime("");
+        public final String label;
+
+        FileField(String label) {
+            this.label = label;
+        }
     }
 
 }

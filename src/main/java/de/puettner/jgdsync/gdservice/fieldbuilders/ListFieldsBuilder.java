@@ -5,16 +5,6 @@ import static de.puettner.jgdsync.gdservice.fieldbuilders.ListFieldsBuilder.List
 public class ListFieldsBuilder<ListField> extends FieldBuilderBase {
 
 
-    public enum ListField {
-        any(""), kind(""), incompleteSearch("");
-
-        public final String label;
-
-        ListField(String label) {
-            this.label = label;
-        }
-    }
-
     private FilesFieldsBuilder filesFieldsBuilder;
 
     private ListFieldsBuilder() {}
@@ -28,6 +18,15 @@ public class ListFieldsBuilder<ListField> extends FieldBuilderBase {
         return any;
     }
 
+    @Override
+    public String build() {
+        StringBuilder fieldBuild = new StringBuilder(super.build());
+        if (filesFieldsBuilder != null) {
+            fieldBuild.append(",files(").append(filesFieldsBuilder.build()).append(")");
+        }
+        return fieldBuild.toString();
+    }
+
     public ListFieldsBuilder add(FilesFieldsBuilder filesFieldsBuilder) {
         this.filesFieldsBuilder = filesFieldsBuilder;
         return this;
@@ -38,13 +37,14 @@ public class ListFieldsBuilder<ListField> extends FieldBuilderBase {
         return this;
     }
 
-    @Override
-    public String build() {
-        StringBuilder fieldBuild = new StringBuilder(super.build());
-        if (filesFieldsBuilder != null) {
-            fieldBuild.append(",files(").append(filesFieldsBuilder.build()).append(")");
+    public enum ListField {
+        any(""), kind(""), incompleteSearch("");
+
+        public final String label;
+
+        ListField(String label) {
+            this.label = label;
         }
-        return fieldBuild.toString();
     }
 
 }

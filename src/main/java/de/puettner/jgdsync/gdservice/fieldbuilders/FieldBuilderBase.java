@@ -15,6 +15,8 @@ public abstract class FieldBuilderBase<T> {
         return build();
     }
 
+    protected abstract T getAny();
+
     public String build() {
         if (fieldList.contains(getAny())) {
             return "*";
@@ -29,7 +31,5 @@ public abstract class FieldBuilderBase<T> {
 
         return sb.toString();
     }
-
-    protected abstract T getAny();
 
 }
