@@ -1,11 +1,11 @@
 package de.puettner.jgdsync.gdservice.command;
 
 import de.puettner.jgdsync.gdservice.MessagePrinter;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.java.Log;
 
 import static de.puettner.jgdsync.AppConstants.*;
 
-@Slf4j
+@Log
 public class InitCheckCommand implements Command {
 
     public boolean execute() {

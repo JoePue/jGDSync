@@ -2,10 +2,10 @@ package de.puettner.jgdsync.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.java.Log;
 
 @Data
-@Slf4j
+@Log
 @AllArgsConstructor
 public class SyncNode {
 

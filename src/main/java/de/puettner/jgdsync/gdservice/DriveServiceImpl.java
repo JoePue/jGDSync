@@ -8,7 +8,7 @@ import de.puettner.jgdsync.DriveFileUtil;
 import de.puettner.jgdsync.gdservice.command.AppConfig;
 import de.puettner.jgdsync.model.Node;
 import de.puettner.jgdsync.model.SyncNode;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -18,7 +18,7 @@ import static de.puettner.jgdsync.DriveFileUtil.FOLDER_MIME_TYPE;
 /**
  * Source {@See https://developers.google.com/drive/v2/web/quickstart/java}
  */
-@Slf4j
+@Log
 public class DriveServiceImpl extends DriveServiceBase implements DriveService {
 
     private final boolean logResponses;
@@ -37,6 +37,10 @@ public class DriveServiceImpl extends DriveServiceBase implements DriveService {
     public FileList listAll() {
         String q = "trashed=false and (not mimeType contains 'application/vnd.google-apps' " +
                 "or mimeType = '" + FOLDER_MIME_TYPE + "')";
+        FileList cacheResult = getCachedResponse(0, null);
+        if (cacheResult != null) {
+            return cacheResult;
+        }
         return list(q, 0, null);
     }
 
@@ -53,7 +57,10 @@ public class DriveServiceImpl extends DriveServiceBase implements DriveService {
         String q = "'root' in parents and trashed=false and (not mimeType contains 'application/vnd.google-apps' " +
                 "or mimeType = '" + FOLDER_MIME_TYPE + "')";
 
-        FileList fileList = list(q, 0, null);
+        FileList fileList = getCachedResponse(0, null);
+        if (fileList == null) {
+            fileList = list(q, 0, null);
+        }
         return super.fileList2NodeList(fileList);
     }
 
@@ -69,7 +76,19 @@ public class DriveServiceImpl extends DriveServiceBase implements DriveService {
         if (!DriveFileUtil.isFolder(folder)) {
             throw new IllegalArgumentException("Wrong Mimetype");
         }
+        FileList cacheResult = getCachedResponse(0, folder.getId());
+        if (cacheResult != null) {
+            return cacheResult;
+        }
         return list(q, 0, folder.getId());
+    }
+
+    private FileList getCachedResponse(int callStackIdx, String hashCode) {
+        FileList result;
+        if ((result = getFileList(++callStackIdx, hashCode)) != null) {
+            return result;
+        }
+        return null;
     }
 
     private FileList list(String q, int callStackIdx, String hashCode) {
@@ -85,6 +104,5 @@ public class DriveServiceImpl extends DriveServiceBase implements DriveService {
             throw new AppException(e);
         }
     }
-
 
 }

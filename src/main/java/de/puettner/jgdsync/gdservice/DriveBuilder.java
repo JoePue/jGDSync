@@ -14,7 +14,7 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
 import de.puettner.jgdsync.AppException;
 import de.puettner.jgdsync.gdservice.command.CommandExecutor;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.java.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +25,7 @@ import java.util.List;
 /**
  * Source {@See https://developers.google.com/drive/v2/web/quickstart/java}
  */
-@Slf4j
+@Log
 public class DriveBuilder {
 
     /** Application name. */
@@ -40,7 +40,7 @@ public class DriveBuilder {
      * <p>
      * If modifying these scopes, delete your previously saved credentials at ~/.credentials/jGDSync
      */
-    private static final List<String> SCOPES = Arrays.asList(DriveScopes.DRIVE_METADATA_READONLY);
+    private static final List<String> SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE);
     /** Global instance of the {@link FileDataStoreFactory}. */
     private static FileDataStoreFactory DATA_STORE_FACTORY;
     /** Global instance of the HTTP transport. */
@@ -79,6 +79,7 @@ public class DriveBuilder {
      * @throws IOException
      */
     public static Credential authorize() throws IOException {
+        log.info("authorize()");
         // Load client secrets.
         InputStream in = CommandExecutor.class.getResourceAsStream("/client_secret.json");
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
@@ -87,7 +88,7 @@ public class DriveBuilder {
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
                 .setDataStoreFactory(DATA_STORE_FACTORY).setAccessType("offline").build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
-        System.out.println("Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
+        log.info("Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
         return credential;
     }
 

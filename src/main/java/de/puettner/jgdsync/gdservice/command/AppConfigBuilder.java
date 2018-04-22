@@ -1,6 +1,6 @@
 package de.puettner.jgdsync.gdservice.command;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.java.Log;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
@@ -13,7 +13,7 @@ import java.util.Collections;
 import static de.puettner.jgdsync.AppConstants.CONFIG_FILE;
 import static de.puettner.jgdsync.gdservice.MessagePrinter.out;
 
-@Slf4j
+@Log
 public class AppConfigBuilder {
 
     public static final String GD_FOLDER = "gd.folder";
@@ -23,6 +23,7 @@ public class AppConfigBuilder {
      * @return Returns null if config file could not load.
      */
     public static AppConfig build() {
+        log.fine("build()");
         Parameters params = new Parameters();
         FileBasedConfigurationBuilder<FileBasedConfiguration> builder = new FileBasedConfigurationBuilder<FileBasedConfiguration>
                 (PropertiesConfiguration.class).configure(params.properties().setFileName(CONFIG_FILE.toString()));
@@ -33,22 +34,22 @@ public class AppConfigBuilder {
             appConfig.setLclFolder(new File("."));
             appConfig.setLclIgnoreFolders(config.getList(String.class, LCL_FOLDER_IGNORE, Collections.EMPTY_LIST));
         } catch (org.apache.commons.configuration2.ex.ConfigurationException e) {
-            log.error(e.getMessage(), e);
+            log.severe(e.getMessage());
         }
         return appConfig;
     }
 
     public static boolean validate(AppConfig appConfig) {
         if (appConfig == null) {
-            log.error(out("Invalid config"));
+            log.severe(out("Invalid config"));
             return false;
         }
         if (appConfig.getGdFolder() == null || appConfig.getGdFolder().isEmpty()) {
-            log.error(out("Invalid property " + GD_FOLDER));
+            log.severe(out("Invalid property " + GD_FOLDER));
             return false;
         }
         if (appConfig.getLclIgnoreFolders() == null) {
-            log.error(out("Invalid property" + LCL_FOLDER_IGNORE));
+            log.severe(out("Invalid property" + LCL_FOLDER_IGNORE));
             return false;
         }
         return true;

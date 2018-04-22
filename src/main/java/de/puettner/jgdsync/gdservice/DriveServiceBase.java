@@ -8,7 +8,7 @@ import de.puettner.jgdsync.gdservice.command.AppConfig;
 import de.puettner.jgdsync.model.GDFile;
 import de.puettner.jgdsync.model.Node;
 import de.puettner.jgdsync.model.SyncNode;
-import lombok.extern.slf4j.Slf4j;
+import lombok.extern.java.Log;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -17,7 +17,7 @@ import java.nio.charset.Charset;
 
 import static de.puettner.jgdsync.AppConstants.CACHE_DIR;
 
-@Slf4j
+@Log
 public class DriveServiceBase {
 
     protected final Node<SyncNode> rootNode;
@@ -35,26 +35,30 @@ public class DriveServiceBase {
         this.appConfig = appConfig;
     }
 
-    protected FileList getFiles(int callStackIdx, String hashCode) {
-        log.trace("getFiles");
-        try {
-            String content = FileUtils.readFileToString(newCacheFile(++callStackIdx, hashCode), Charset.forName("UTF-8"));
-            return factory.createJsonParser(content).parse(FileList.class);
-        } catch (IOException e) {
-            e.printStackTrace();
+    protected FileList getFileList(int callStackIdx, String hashCode) {
+        log.fine("getFileList");
+        File file = createCacheFile(++callStackIdx, hashCode);
+        if (file.exists()) {
+            try {
+                String content = FileUtils.readFileToString(file, Charset.forName("UTF-8"));
+                log.finer("Using Cache for " + file.getName());
+                return factory.createJsonParser(content).parse(FileList.class);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return null;
     }
 
-    protected java.io.File newCacheFile(int idx, String hashCode) {
+    protected java.io.File createCacheFile(int idx, String hashCode) {
         String methodName = new Throwable().getStackTrace()[++idx].getMethodName();
         return new java.io.File(CACHE_DIR + File.separator + methodName + (hashCode != null ? "_" + hashCode : "") + ".json");
     }
 
     protected <T extends com.google.api.client.json.GenericJson> T cacheReponse(T result, int callStackIdx, String hashCode) {
-        log.debug(new Object() {}.getClass().getEnclosingMethod().getName());
+        log.fine(new Object() {}.getClass().getEnclosingMethod().getName());
         try {
-            FileUtils.write((newCacheFile(++callStackIdx, hashCode)), factory.toPrettyString(result), Charset.forName("UTF-8"), false);
+            FileUtils.write((createCacheFile(++callStackIdx, hashCode)), factory.toPrettyString(result), Charset.forName("UTF-8"), false);
         } catch (IOException e) {
             e.printStackTrace();
         }

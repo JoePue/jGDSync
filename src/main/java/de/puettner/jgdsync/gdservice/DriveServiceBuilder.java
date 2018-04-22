@@ -11,10 +11,6 @@ public class DriveServiceBuilder {
     }
 
     public static DriveService build(boolean useMock, boolean logResponses, AppConfig appConfig, Node<SyncNode> rootNode) {
-        if (useMock) {
-            return new DriveServiceMock(appConfig, rootNode);
-        } else {
-            return new DriveServiceImpl(DriveBuilder.build(), logResponses, appConfig, rootNode);
-        }
+        return new DriveServiceImpl(DriveBuilder.build(), logResponses, appConfig, rootNode);
     }
 }
