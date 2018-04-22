@@ -1,10 +1,8 @@
 package de.puettner.jgdsync.gdservice;
 
 import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import de.puettner.jgdsync.AppException;
-import de.puettner.jgdsync.DriveFileUtil;
 import de.puettner.jgdsync.gdservice.command.AppConfig;
 import de.puettner.jgdsync.model.Node;
 import de.puettner.jgdsync.model.SyncNode;
@@ -37,30 +35,30 @@ public class DriveServiceImpl extends DriveServiceBase implements DriveService {
     public FileList listAll() {
         String q = "trashed=false and (not mimeType contains 'application/vnd.google-apps' " +
                 "or mimeType = '" + FOLDER_MIME_TYPE + "')";
-        FileList cacheResult = getCachedResponse(0, null);
-        if (cacheResult != null) {
-            return cacheResult;
+        FileList fileList = getCachedResponse(0, q.hashCode());
+        if (fileList == null) {
+            fileList = list(q, 0, q.hashCode());
         }
-        return list(q, 0, null);
+        return fileList;
     }
 
-    private FileList getCachedResponse(int callStackIdx, String hashCode) {
-        FileList result;
-        if ((result = getFileList(++callStackIdx, hashCode)) != null) {
-            return result;
+    private FileList getCachedResponse(int callStackIdx, int hashCode) {
+        FileList fileList;
+        if ((fileList = getFileList(++callStackIdx, hashCode)) != null) {
+            return fileList;
         }
         return null;
     }
 
-    private FileList list(String q, int callStackIdx, String hashCode) {
-        FileList result;
+    private FileList list(String q, int callStackIdx, int hashCode) {
+        FileList fileList;
         try {
             Drive.Files.List list = drive.files().list().setQ(q).setFields("*");
-            result = list.execute();
+            fileList = list.execute();
             if (cacheResponses) {
-                cacheReponse(result, ++callStackIdx, hashCode);
+                cacheReponse(fileList, ++callStackIdx, hashCode);
             }
-            return result;
+            return fileList;
         } catch (IOException e) {
             throw new AppException(e);
         }
@@ -79,9 +77,19 @@ public class DriveServiceImpl extends DriveServiceBase implements DriveService {
         String q = "'root' in parents and trashed=false and (not mimeType contains 'application/vnd.google-apps' " +
                 "or mimeType = '" + FOLDER_MIME_TYPE + "')";
 
-        FileList fileList = getCachedResponse(0, null);
+        FileList fileList = getCachedResponse(0, q.hashCode());
         if (fileList == null) {
-            fileList = list(q, 0, null);
+            fileList = list(q, 0, q.hashCode());
+        }
+        return super.fileList2NodeList(fileList);
+    }
+
+    @Override
+    public Node<SyncNode> findFolderByName(String foldername) {
+        String q = MessageFormat.format("name=''{0}'' and trashed=false and mimeType=''" + FOLDER_MIME_TYPE + "''", foldername);
+        FileList fileList = getCachedResponse(0, q.hashCode());
+        if (fileList == null) {
+            fileList = list(q, 0, q.hashCode());
         }
         return super.fileList2NodeList(fileList);
     }
@@ -89,40 +97,25 @@ public class DriveServiceImpl extends DriveServiceBase implements DriveService {
     /**
      * Lists all folders and files within a provided folder.
      *
-     * @param folder
+     * @param node
      * @return
      */
     @Override
-    public FileList listFolder(File folder) {
-        String q = MessageFormat.format("''{0}'' in parents and trashed=false ", folder.getId());
-        if (!DriveFileUtil.isFolder(folder)) {
+    public Node<SyncNode> listFolderByNode(Node<SyncNode> node, boolean recursive) {
+        String q = MessageFormat.format("''{0}'' in parents and trashed=false ", node.getData().getGdFile().getId());
+        if (!node.getData().getGdFile().isFolder()) {
             throw new IllegalArgumentException("Wrong Mimetype");
         }
-        FileList cacheResult = getCachedResponse(0, folder.getId());
-        if (cacheResult != null) {
-            return cacheResult;
+        FileList fileList = getCachedResponse(0, q.hashCode());
+        if (fileList == null) {
+            fileList = list(q, 0, q.hashCode());
         }
-        return list(q, 0, folder.getId());
-    }
-
-    @Override
-    public FileList findFolderByName(String foldername) {
-        String q = MessageFormat.format("name=''{0}'' and trashed=false and mimeType=''" + FOLDER_MIME_TYPE + "''", foldername);
-        FileList cacheResult = getCachedResponse(0, foldername);
-        if (cacheResult != null) {
-            return cacheResult;
+        Node<SyncNode> nodes = super.fileList2NodeList(fileList, node);
+        if (recursive) {
+            nodes.getChildren().stream().filter(subNode -> subNode.getData().getGdFile().isFolder()).forEach(subNode -> this
+                    .listFolderByNode(subNode, true));
         }
-        return list(q, 0, String.valueOf(foldername.hashCode()));
-    }
-
-    @Override
-    public Node<SyncNode> listFolderByName(String foldername) {
-        FileList fileList = findFolderByName(foldername + "_12345");
-        if (fileList.size() == 1) {
-            fileList = this.listFolder(fileList.getFiles().get(0));
-            return super.fileList2NodeList(fileList);
-        }
-        return null;
+        return nodes;
     }
 
 }

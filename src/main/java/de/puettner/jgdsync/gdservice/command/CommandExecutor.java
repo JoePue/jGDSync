@@ -63,7 +63,7 @@ public class CommandExecutor {
             if (isAppConfigurationCorrect) {
                 initializedService();
                 if (Command.LS.equalsIgnoreCase(cmd)) {
-                    new GdLsCommand(consolePrinter, service).execute(commandArguments);
+                    new LsCommand(consolePrinter, service).execute(commandArguments);
                 }
                 if (Command.CONFIGUPDATE.equalsIgnoreCase(cmd)) {
                     ConfigUpdateCommand configUpdateCommand = new ConfigUpdateCommand(service);

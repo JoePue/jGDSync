@@ -35,7 +35,7 @@ public class DriveServiceBase {
         this.appConfig = appConfig;
     }
 
-    protected FileList getFileList(int callStackIdx, String hashCode) {
+    protected FileList getFileList(int callStackIdx, int hashCode) {
         log.fine("getFileList");
         File file = createCacheFile(++callStackIdx, hashCode);
         if (file.exists()) {
@@ -50,12 +50,12 @@ public class DriveServiceBase {
         return null;
     }
 
-    protected java.io.File createCacheFile(int idx, String hashCode) {
+    protected java.io.File createCacheFile(int idx, int hashCode) {
         String methodName = new Throwable().getStackTrace()[++idx].getMethodName();
-        return new java.io.File(CACHE_DIR + File.separator + methodName + (hashCode != null ? "_" + hashCode : "") + ".json");
+        return new java.io.File(CACHE_DIR + File.separator + methodName + "_" + hashCode + ".json");
     }
 
-    protected <T extends com.google.api.client.json.GenericJson> T cacheReponse(T result, int callStackIdx, String hashCode) {
+    protected <T extends com.google.api.client.json.GenericJson> T cacheReponse(T result, int callStackIdx, int hashCode) {
         log.fine(new Object() {}.getClass().getEnclosingMethod().getName());
         try {
             FileUtils.write((createCacheFile(++callStackIdx, hashCode)), factory.toPrettyString(result), Charset.forName("UTF-8"), false);
@@ -66,14 +66,21 @@ public class DriveServiceBase {
     }
 
     public Node<SyncNode> fileList2NodeList(FileList fileList) {
+        Node<SyncNode> tempNode = new Node<>(null, true);
+        return this.fileList2NodeList(fileList, tempNode);
+    }
+
+
+    public Node<SyncNode> fileList2NodeList(FileList fileList, Node<SyncNode> parentNode) {
+
         for (com.google.api.services.drive.model.File file : fileList.getFiles()) {
             if (DriveFileUtil.isFolder(file)) {
                 Node<SyncNode> node = new Node<>(new SyncNode(false, new GDFile(file), null), true);
-                rootNode.addChild(node);
+                parentNode.addChild(node);
             } else {
-                rootNode.addChild(new SyncNode(false, new GDFile(file), null));
+                parentNode.addChild(new SyncNode(false, new GDFile(file), null));
             }
         }
-        return rootNode;
+        return parentNode;
     }
 }

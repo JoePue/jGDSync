@@ -36,5 +36,10 @@ public class GDFile {
     public List<String> getParents() {
         return file.getParents();
     }
+
+    @Override
+    public String toString() {
+        return file.getName();
+    }
 }
 

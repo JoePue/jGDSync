@@ -13,7 +13,7 @@ public class ConsolePrinter {
     public ConsolePrinter() {
     }
 
-    public void printFileList(Node<SyncNode> nodeList) {
+    public void printNodeList(Node<SyncNode> nodeList) {
         String intendFolder = "| ";
         String intendFile = "|- ";
 
@@ -59,4 +59,5 @@ public class ConsolePrinter {
             return name;
         }
     }
+
 }

@@ -63,4 +63,9 @@ public class Node<T> {
     public void removeParent() {
         this.parent = null;
     }
+
+    @Override
+    public String toString() {
+        return (this.data == null ? "null" : this.data.toString());
+    }
 }

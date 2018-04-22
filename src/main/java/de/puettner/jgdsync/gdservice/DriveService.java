@@ -1,6 +1,5 @@
 package de.puettner.jgdsync.gdservice;
 
-import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 import de.puettner.jgdsync.gdservice.command.AppConfig;
 import de.puettner.jgdsync.model.Node;
@@ -12,11 +11,9 @@ public interface DriveService {
 
     Node<SyncNode> listRootFolder();
 
-    FileList listFolder(File q);
-
     void setAppConfig(AppConfig appConfig);
 
-    FileList findFolderByName(String foldername);
+    Node<SyncNode> findFolderByName(String foldername);
 
-    Node<SyncNode> listFolderByName(String firstArgument);
+    Node<SyncNode> listFolderByNode(Node<SyncNode> node, boolean recursive);
 }
