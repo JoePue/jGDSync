@@ -7,6 +7,7 @@ public interface Command {
     String INITCHECK = "initcheck";
     String INITSYNC = "syncinit";
     String CONFIGUPDATE = "configupdate";
+    String DIFF = "diff";
 
     CommandResult execute(CommandArgs arguments);
 }

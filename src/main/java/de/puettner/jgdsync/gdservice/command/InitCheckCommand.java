@@ -4,6 +4,7 @@ import de.puettner.jgdsync.gdservice.MessagePrinter;
 import lombok.extern.java.Log;
 
 import static de.puettner.jgdsync.AppConstants.*;
+import static de.puettner.jgdsync.gdservice.command.CommandResult.SUCCESS;
 
 @Log
 public class InitCheckCommand implements Command {
@@ -21,6 +22,6 @@ public class InitCheckCommand implements Command {
             MessagePrinter.out("Missing file ''{0}''. Use {1}", CONFIG_FILE, Command.INITSYNC);
             return CommandResult.builder().processed(true).successful(false).build();
         }
-        return CommandResult.builder().processed(true).successful(true).build();
+        return SUCCESS;
     }
 }

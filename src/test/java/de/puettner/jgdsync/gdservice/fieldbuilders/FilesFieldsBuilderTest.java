@@ -21,25 +21,25 @@ public class FilesFieldsBuilderTest {
 
     @Test
     public void kindAndIncompleteSearchAndEmptyFiles() {
-        assertEquals("incompleteSearch,kind,files()", ListFieldsBuilder.create().add(kind).add(incompleteSearch).add(FilesFieldsBuilder
+        assertEquals("kind,incompleteSearch,files()", ListFieldsBuilder.create().add(kind).add(incompleteSearch).add(FilesFieldsBuilder
                 .create()).build());
     }
 
     @Test
     public void kindAndIncompleteSearchAndFiles() {
-        assertEquals("incompleteSearch,kind,files(id)", ListFieldsBuilder.create().add(kind).add(incompleteSearch).add(FilesFieldsBuilder
+        assertEquals("kind,incompleteSearch,files(id)", ListFieldsBuilder.create().add(kind).add(incompleteSearch).add(FilesFieldsBuilder
                 .create().add(id)).build());
     }
 
     @Test
     public void kindAndIncompleteSearchAnyFiles() {
-        assertEquals("incompleteSearch,kind,files(*)", ListFieldsBuilder.create().add(kind).add(incompleteSearch).add(FilesFieldsBuilder
+        assertEquals("kind,incompleteSearch,files(*)", ListFieldsBuilder.create().add(kind).add(incompleteSearch).add(FilesFieldsBuilder
                 .create().add(any)).build());
     }
 
     @Test
     public void kindAndIncompleteSearchAnyFilesWithMimeTypeAndId() {
-        assertEquals("incompleteSearch,kind,files(mimeType,id)", ListFieldsBuilder.create().add(kind).add(incompleteSearch).add
+        assertEquals("kind,incompleteSearch,files(id,mimeType)", ListFieldsBuilder.create().add(kind).add(incompleteSearch).add
                 (FilesFieldsBuilder.create().add(id).add(mimeType)).build());
     }
 

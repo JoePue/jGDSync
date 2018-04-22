@@ -1,13 +1,9 @@
 package de.puettner.jgdsync.gdservice.command;
 
-import de.puettner.jgdsync.gdservice.DriveService;
-import de.puettner.jgdsync.gdservice.DriveServiceBuilder;
+import de.puettner.jgdsync.gdservice.SyncService;
+import de.puettner.jgdsync.gdservice.SyncServiceBuilder;
 import de.puettner.jgdsync.gdservice.console.ConsolePrinter;
-import de.puettner.jgdsync.model.Node;
-import de.puettner.jgdsync.model.SyncNode;
 import lombok.extern.java.Log;
-
-import java.io.File;
 
 import static de.puettner.jgdsync.gdservice.MessagePrinter.out;
 
@@ -17,14 +13,10 @@ import static de.puettner.jgdsync.gdservice.MessagePrinter.out;
 @Log
 public class CommandExecutor {
 
-    private static final boolean cacheResponses = true;
-    private static final SyncNode ROOT_SYNC_NODE = new SyncNode(false, null, new File("."));
-    private static final Node<SyncNode> ROOT_NODE = new Node<>(ROOT_SYNC_NODE, true);
-    private static final boolean useCache = true;
     private final InitCheckCommand initCheckCommand = new InitCheckCommand();
     private final TestDebugLogsCommand debugLogsCommand = new TestDebugLogsCommand();
     private final ConsolePrinter consolePrinter;
-    private DriveService service;
+    private SyncService service;
     private AppConfig appConfig;
     private boolean isAppConfigurationCorrect = false;
 
@@ -65,6 +57,9 @@ public class CommandExecutor {
                 if (Command.LS.equalsIgnoreCase(cmd)) {
                     new LsCommand(consolePrinter, service).execute(commandArguments);
                 }
+                if (Command.DIFF.equalsIgnoreCase(cmd)) {
+                    new DiffCommand(consolePrinter, service, appConfig).execute(commandArguments);
+                }
                 if (Command.CONFIGUPDATE.equalsIgnoreCase(cmd)) {
                     ConfigUpdateCommand configUpdateCommand = new ConfigUpdateCommand(service);
                     service.setAppConfig(configUpdateCommand.getAppConfig());
@@ -78,9 +73,9 @@ public class CommandExecutor {
     }
 
 
-    private DriveService initializedService() {
+    private SyncService initializedService() {
         if (this.service == null) {
-            this.service = DriveServiceBuilder.build(useCache, cacheResponses, appConfig, ROOT_NODE);
+            this.service = SyncServiceBuilder.build(appConfig);
         }
         return this.service;
     }

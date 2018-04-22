@@ -18,8 +18,9 @@ public class AppConfig {
     @Nonnull
     private File lclFolder;
     @Nonnull
-    private String gdFolder;
+    private String gdFolderId;
     @Nonnull
     private List<String> lclIgnoreFolders;
 
+    boolean cacheResponses = true;
 }

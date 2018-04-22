@@ -1,14 +1,16 @@
 package de.puettner.jgdsync.gdservice.command;
 
-import de.puettner.jgdsync.gdservice.DriveService;
+import de.puettner.jgdsync.gdservice.SyncService;
+
+import static de.puettner.jgdsync.gdservice.command.CommandResult.SUCCESS;
 
 public class ConfigUpdateCommand implements Command {
 
-    private final DriveService service;
+    private final SyncService service;
     private AppConfigBuilder builder = new AppConfigBuilder();
     private AppConfig appConfig;
 
-    public ConfigUpdateCommand(DriveService service) {
+    public ConfigUpdateCommand(SyncService service) {
         this.service = service;
     }
 
@@ -17,7 +19,7 @@ public class ConfigUpdateCommand implements Command {
         if (AppConfigBuilder.validate(appConfig)) {
             service.setAppConfig(appConfig);
         }
-        return null;
+        return SUCCESS;
     }
 
     public AppConfig getAppConfig() {

@@ -2,7 +2,7 @@ package de.puettner.jgdsync.gdservice.console;
 
 import de.puettner.jgdsync.model.GDFile;
 import de.puettner.jgdsync.model.Node;
-import de.puettner.jgdsync.model.SyncNode;
+import de.puettner.jgdsync.model.SyncData;
 
 import java.util.List;
 
@@ -13,7 +13,7 @@ public class ConsolePrinter {
     public ConsolePrinter() {
     }
 
-    public void printNodeList(Node<SyncNode> nodeList) {
+    public void printNodeList(Node<SyncData> nodeList) {
         String intendFolder = "| ";
         String intendFile = "|- ";
 
@@ -25,7 +25,7 @@ public class ConsolePrinter {
         });
     }
 
-    private void printFolder(Node<SyncNode> nodeList, String intend) {
+    private void printFolder(Node<SyncData> nodeList, String intend) {
         printFile(nodeList, intend.substring(0, intend.length() - 2) + "+ ");
         String intendFolder = intend + "| ";
         String intendFile = intend + "|- ";
@@ -38,7 +38,7 @@ public class ConsolePrinter {
         });
     }
 
-    public void printFile(Node<SyncNode> node, String intend) {
+    public void printFile(Node<SyncData> node, String intend) {
         GDFile file = node.getData().getGdFile();
         out.printf("%-50s%-35s %-60s %-40s", (trim(intend + file.getName(), 50)), file.getModifiedTime(), file.getId(), file.getMimeType
                 (), file.getParents());
@@ -60,4 +60,7 @@ public class ConsolePrinter {
         }
     }
 
+    public void error(String s) {
+        out.println("[Error] " + s);
+    }
 }

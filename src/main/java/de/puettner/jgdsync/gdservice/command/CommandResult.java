@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CommandResult {
-
+    public static final CommandResult SUCCESS = new CommandResult(true, true);
     private boolean processed;
     private boolean successful;
 

@@ -5,6 +5,7 @@ import lombok.extern.java.Log;
 import java.util.logging.Level;
 
 import static de.puettner.jgdsync.gdservice.MessagePrinter.out;
+import static de.puettner.jgdsync.gdservice.command.CommandResult.SUCCESS;
 
 @Log
 public class TestDebugLogsCommand implements Command {
@@ -22,6 +23,6 @@ public class TestDebugLogsCommand implements Command {
         log.info(log.getClass().getName() + " info");
         log.fine(log.getClass().getName() + " debug");
         log.finer(log.getClass().getName() + " trace");
-        return CommandResult.builder().processed(true).successful(true).build();
+        return SUCCESS;
     }
 }

@@ -22,10 +22,10 @@ public class Main {
         log.info("main()");
         List<String[]> commandList = new ArrayList<>();
         if (System.getProperty("app.profiles.active").equals("DEV")) {
-            commandList.add(new String[]{Command.LS, "-r", "test-sync-dir"});
-        } else {
-            commandList.add(args);
+            //            commandList.add(new String[]{Command.LS, "-r", "test-sync-dir"});
+//            commandList.add(new String[]{Command.DIFF});
         }
+        commandList.add(args);
 
         CommandExecutor commandExecutor = new CommandExecutor();
         for (String[] command : commandList) {

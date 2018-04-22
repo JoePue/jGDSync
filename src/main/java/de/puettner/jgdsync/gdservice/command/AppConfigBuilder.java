@@ -16,7 +16,7 @@ import static de.puettner.jgdsync.gdservice.MessagePrinter.out;
 @Log
 public class AppConfigBuilder {
 
-    public static final String GD_FOLDER = "gd.folder";
+    public static final String GD_FOLDER_ID = "gd.folder.id";
     public static final String LCL_FOLDER_IGNORE = "lcl.folder.ignore";
 
     /**
@@ -30,7 +30,7 @@ public class AppConfigBuilder {
         AppConfig appConfig = new AppConfig();
         try {
             Configuration config = builder.getConfiguration();
-            appConfig.setGdFolder(config.getString(GD_FOLDER, null));
+            appConfig.setGdFolderId(config.getString(GD_FOLDER_ID, null));
             appConfig.setLclFolder(new File("."));
             appConfig.setLclIgnoreFolders(config.getList(String.class, LCL_FOLDER_IGNORE, Collections.EMPTY_LIST));
         } catch (org.apache.commons.configuration2.ex.ConfigurationException e) {
@@ -44,8 +44,8 @@ public class AppConfigBuilder {
             log.severe(out("Invalid config"));
             return false;
         }
-        if (appConfig.getGdFolder() == null || appConfig.getGdFolder().isEmpty()) {
-            log.severe(out("Invalid property " + GD_FOLDER));
+        if (appConfig.getGdFolderId() == null || appConfig.getGdFolderId().isEmpty()) {
+            log.severe(out("Invalid property " + GD_FOLDER_ID));
             return false;
         }
         if (appConfig.getLclIgnoreFolders() == null) {
