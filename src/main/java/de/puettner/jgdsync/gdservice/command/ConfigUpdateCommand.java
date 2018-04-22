@@ -12,12 +12,12 @@ public class ConfigUpdateCommand implements Command {
         this.service = service;
     }
 
-    public boolean execute() {
+    public CommandResult execute(CommandArgs args) {
         this.appConfig = builder.build();
         if (AppConfigBuilder.validate(appConfig)) {
             service.setAppConfig(appConfig);
         }
-        return true;
+        return null;
     }
 
     public AppConfig getAppConfig() {

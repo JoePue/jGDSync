@@ -8,5 +8,5 @@ public interface Command {
     String INITSYNC = "syncinit";
     String CONFIGUPDATE = "configupdate";
 
-    boolean execute();
+    CommandResult execute(CommandArgs arguments);
 }

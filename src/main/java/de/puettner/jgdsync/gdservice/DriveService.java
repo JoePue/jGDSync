@@ -15,4 +15,8 @@ public interface DriveService {
     FileList listFolder(File q);
 
     void setAppConfig(AppConfig appConfig);
+
+    FileList findFolderByName(String foldername);
+
+    Node<SyncNode> listFolderByName(String firstArgument);
 }

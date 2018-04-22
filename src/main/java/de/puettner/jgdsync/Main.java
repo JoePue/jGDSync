@@ -5,7 +5,6 @@ import de.puettner.jgdsync.gdservice.command.CommandExecutor;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,14 +20,17 @@ public class Main {
 
     public static void main(String[] args) {
         log.info("main()");
-        if (System.getProperty("spring.profiles.active").contains("DEV")) {
-            List<String> argList = new ArrayList(Arrays.asList(args));
-            argList.add(Command.TESTDEBUGLOGS);
-            argList.add(Command.LS);
-            args = argList.toArray(new String[argList.size()]);
+        List<String[]> commandList = new ArrayList<>();
+        if (System.getProperty("app.profiles.active").equals("DEV")) {
+            commandList.add(new String[]{Command.LS, "test-sync-dir"});
+        } else {
+            commandList.add(args);
         }
+
         CommandExecutor commandExecutor = new CommandExecutor();
-        commandExecutor.init();
-        commandExecutor.processCmdOptions(args);
+        for (String[] command : commandList) {
+            commandExecutor.init();
+            commandExecutor.processCmdOptions(command);
+        }
     }
 }

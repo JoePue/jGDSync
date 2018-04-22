@@ -21,11 +21,11 @@ import static de.puettner.jgdsync.DriveFileUtil.FOLDER_MIME_TYPE;
 @Log
 public class DriveServiceImpl extends DriveServiceBase implements DriveService {
 
-    private final boolean logResponses;
+    private final boolean cacheResponses;
 
     public DriveServiceImpl(Drive drive, boolean logResponses, AppConfig appConfig, Node<SyncNode> rootNode) {
         super(drive, appConfig, rootNode);
-        this.logResponses = logResponses;
+        this.cacheResponses = logResponses;
     }
 
     /**
@@ -42,6 +42,28 @@ public class DriveServiceImpl extends DriveServiceBase implements DriveService {
             return cacheResult;
         }
         return list(q, 0, null);
+    }
+
+    private FileList getCachedResponse(int callStackIdx, String hashCode) {
+        FileList result;
+        if ((result = getFileList(++callStackIdx, hashCode)) != null) {
+            return result;
+        }
+        return null;
+    }
+
+    private FileList list(String q, int callStackIdx, String hashCode) {
+        FileList result;
+        try {
+            Drive.Files.List list = drive.files().list().setQ(q).setFields("*");
+            result = list.execute();
+            if (cacheResponses) {
+                cacheReponse(result, ++callStackIdx, hashCode);
+            }
+            return result;
+        } catch (IOException e) {
+            throw new AppException(e);
+        }
     }
 
     /**
@@ -83,26 +105,24 @@ public class DriveServiceImpl extends DriveServiceBase implements DriveService {
         return list(q, 0, folder.getId());
     }
 
-    private FileList getCachedResponse(int callStackIdx, String hashCode) {
-        FileList result;
-        if ((result = getFileList(++callStackIdx, hashCode)) != null) {
-            return result;
+    @Override
+    public FileList findFolderByName(String foldername) {
+        String q = MessageFormat.format("name=''{0}'' and trashed=false and mimeType=''" + FOLDER_MIME_TYPE + "''", foldername);
+        FileList cacheResult = getCachedResponse(0, foldername);
+        if (cacheResult != null) {
+            return cacheResult;
         }
-        return null;
+        return list(q, 0, String.valueOf(foldername.hashCode()));
     }
 
-    private FileList list(String q, int callStackIdx, String hashCode) {
-        FileList result;
-        try {
-            Drive.Files.List list = drive.files().list().setQ(q).setFields("*");
-            result = list.execute();
-            if (logResponses) {
-                cacheReponse(result, ++callStackIdx, hashCode);
-            }
-            return result;
-        } catch (IOException e) {
-            throw new AppException(e);
+    @Override
+    public Node<SyncNode> listFolderByName(String foldername) {
+        FileList fileList = findFolderByName(foldername + "_12345");
+        if (fileList.size() == 1) {
+            fileList = this.listFolder(fileList.getFiles().get(0));
+            return super.fileList2NodeList(fileList);
         }
+        return null;
     }
 
 }

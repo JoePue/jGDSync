@@ -15,9 +15,18 @@ public class GdLsCommand implements Command {
         this.service = service;
     }
 
-    public boolean execute() {
-        Node<SyncNode> result = service.listRootFolder();
+    public CommandResult execute(CommandArgs args) {
+        Node<SyncNode> result;
+        if (args.getFirstArgument() == null) {
+            result = service.listRootFolder();
+        } else {
+            if ("/".equals(args.getFirstArgument())) {
+                result = service.listRootFolder();
+            } else {
+                result = service.listFolderByName(args.getFirstArgument());
+            }
+        }
         consolePrinter.printFileList(result);
-        return true;
+        return CommandResult.builder().processed(true).successful(true).build();
     }
 }

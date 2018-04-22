@@ -12,7 +12,7 @@ public class TestDebugLogsCommand implements Command {
     public TestDebugLogsCommand() {
     }
 
-    public boolean execute() {
+    public CommandResult execute(CommandArgs args) {
         log.severe(log.getClass().getName() + " error");
         log.warning(log.getClass().getName() + " warn");
         log.info(out("is SEVERE enabled: %s, is WARNING enabled: %s, is INFO enabled: %s, is CONFIG enabled: %s" + ", is Fine enabled: %s" +
@@ -22,14 +22,6 @@ public class TestDebugLogsCommand implements Command {
         log.info(log.getClass().getName() + " info");
         log.fine(log.getClass().getName() + " debug");
         log.finer(log.getClass().getName() + " trace");
-
-        //        Logger logger = Logger.getLogger(Main.class.getSimpleName());
-        //        logger.severe(logger.getClass().getName() + " severe");
-        //        logger.warning(logger.getClass().getName() + " warning");
-        //        logger.info(logger.getClass().getName() + " info");
-        //        logger.fine(logger.getClass().getName() + " fine");
-        //        logger.finer(logger.getClass().getName() + " finer");
-        //        logger.finest(logger.getClass().getName() + " finest");
-        return true;
+        return CommandResult.builder().processed(true).successful(true).build();
     }
 }

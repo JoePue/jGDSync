@@ -26,6 +26,7 @@ public class CommandExecutor {
     private final ConsolePrinter consolePrinter;
     private DriveService service;
     private AppConfig appConfig;
+    private boolean isAppConfigurationCorrect = false;
 
     public CommandExecutor() {
         log.fine("test");
@@ -38,41 +39,44 @@ public class CommandExecutor {
         if (!AppConfigBuilder.validate(appConfig)) {
             out("App configuration is invalid");
         }
+        CommandResult cmdResult = initCheckCommand.execute(null);
+        if (cmdResult.isProcessed() && cmdResult.isSuccessful()) {
+            this.isAppConfigurationCorrect = true;
+        }
     }
 
     public void processCmdOptions(String[] args) {
-        boolean commandIdentified;
-        boolean isAppInitialized = initCheckCommand.execute();
+        final CommandArgs commandArguments = new CommandArgs(args);
+        CommandResult cmdResult = initCheckCommand.execute(commandArguments);
 
         for (String cmd : args) {
-            commandIdentified = false;
             log.info("processCmdOptions");
             if (Command.INITCHECK.equalsIgnoreCase(cmd)) {
-                isAppInitialized = initCheckCommand.execute();
-                commandIdentified = true;
+                cmdResult = initCheckCommand.execute(commandArguments);
+                if (cmdResult.isProcessed() && cmdResult.isSuccessful()) {
+                    isAppConfigurationCorrect = true;
+                }
             }
             if (Command.TESTDEBUGLOGS.equalsIgnoreCase(cmd)) {
-                debugLogsCommand.execute();
-                commandIdentified = true;
+                debugLogsCommand.execute(commandArguments);
             }
-            if (isAppInitialized) {
+            if (isAppConfigurationCorrect) {
                 initializedService();
                 if (Command.LS.equalsIgnoreCase(cmd)) {
-                    new GdLsCommand(consolePrinter, service).execute();
-                    commandIdentified = true;
+                    new GdLsCommand(consolePrinter, service).execute(commandArguments);
                 }
                 if (Command.CONFIGUPDATE.equalsIgnoreCase(cmd)) {
                     ConfigUpdateCommand configUpdateCommand = new ConfigUpdateCommand(service);
                     service.setAppConfig(configUpdateCommand.getAppConfig());
-                    configUpdateCommand.execute();
-                    commandIdentified = true;
+                    configUpdateCommand.execute(commandArguments);
                 }
-                if (!commandIdentified) {
-                    out("Unknown command");
-                }
+            }
+            if (!cmdResult.isProcessed()) {
+                out("Unknown command");
             }
         }
     }
+
 
     private DriveService initializedService() {
         if (this.service == null) {
