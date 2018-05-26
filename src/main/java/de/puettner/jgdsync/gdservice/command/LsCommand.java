@@ -6,6 +6,8 @@ import de.puettner.jgdsync.model.Node;
 import de.puettner.jgdsync.model.SyncData;
 import lombok.extern.java.Log;
 
+import java.util.Optional;
+
 import static de.puettner.jgdsync.gdservice.MessagePrinter.out;
 import static de.puettner.jgdsync.gdservice.command.CommandResult.SUCCESS;
 
@@ -23,15 +25,16 @@ public class LsCommand implements Command {
     public CommandResult execute(CommandArgs args) {
         Node<SyncData> result;
         boolean recursive = args.containsFlag("-r");
-        String firstParameter = args.getFirstParameter();
+        Optional<String> firstParameter = args.getFirstParameter();
+
         log.info(out("execute() firstParameter: {0}, recursive: {1}", firstParameter, recursive));
-        if (firstParameter == null) {
+        if (!firstParameter.isPresent()) {
             result = service.listRootFolder();
         } else {
             if ("/".equals(firstParameter)) {
                 result = service.listRootFolder();
             } else {
-                Node<SyncData> node = service.findFolderByName(firstParameter);
+                Node<SyncData> node = service.findFolderByName(firstParameter.get());
                 if (node.getChildren().size() != 1) {
                     consolePrinter.printNodeList(node);
                     return CommandResult.builder().processed(true).successful(false).build();

@@ -11,7 +11,11 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class CommandResult {
+    /** Die Verarbeitung des Eingabebefehls war erfolgreich. */
     public static final CommandResult SUCCESS = new CommandResult(true, true);
+    /** Beim Verarbeiten des Eingabebefehls ist ein Fehler aufgetreten (Befehl erkannt, Ausführung nicht erfolgreich) */
+    public static final CommandResult PROCESS_ERROR = new CommandResult(true, false);
+
     private boolean processed;
     private boolean successful;
 

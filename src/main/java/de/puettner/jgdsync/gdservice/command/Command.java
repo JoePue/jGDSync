@@ -10,4 +10,5 @@ public interface Command {
     String DIFF = "diff";
 
     CommandResult execute(CommandArgs arguments);
+
 }
