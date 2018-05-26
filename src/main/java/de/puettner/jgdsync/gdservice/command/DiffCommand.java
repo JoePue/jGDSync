@@ -35,6 +35,21 @@ public class DiffCommand implements Command {
         return SUCCESS;
     }
 
+    @Override
+    public String getCommandName() {
+        return DIFF;
+    }
+
+    @Override
+    public String getHelpInfo() {
+        return "";
+    }
+
+    @Override
+    public String getUsageInfo() {
+        return PROGRAMM_NAME + " " + this.getCommandName() + "";
+    }
+
     private void diffFolder(Node<SyncData> node) {
         SyncData syncData = node.getData();
         if (syncData.isGdFileLoaded()) {

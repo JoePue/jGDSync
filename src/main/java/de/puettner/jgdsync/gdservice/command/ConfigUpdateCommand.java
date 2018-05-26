@@ -22,6 +22,19 @@ public class ConfigUpdateCommand implements Command {
         return SUCCESS;
     }
 
+    public String getCommandName() {
+        return CONFIGUPDATE;
+    }
+
+    public String getHelpInfo() {
+        return "";
+    }
+
+    @Override
+    public String getUsageInfo() {
+        return PROGRAMM_NAME + " " + this.getCommandName() + "";
+    }
+
     public AppConfig getAppConfig() {
         return appConfig;
     }

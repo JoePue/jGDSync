@@ -25,4 +25,19 @@ public class TestDebugLogsCommand implements Command {
         log.finer(log.getClass().getName() + " trace");
         return SUCCESS;
     }
+
+    @Override
+    public String getCommandName() {
+        return TESTDEBUGLOGS;
+    }
+
+    @Override
+    public String getHelpInfo() {
+        return "Prints a message an all error levels with a logger instance of " + log.getClass().getName();
+    }
+
+    @Override
+    public String getUsageInfo() {
+        return PROGRAMM_NAME + " " + this.getCommandName();
+    }
 }

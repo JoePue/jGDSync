@@ -46,4 +46,18 @@ public class LsCommand implements Command {
         consolePrinter.printNodeList(result);
         return SUCCESS;
     }
+
+    public String getCommandName() {
+        return LS;
+    }
+
+    @Override
+    public String getHelpInfo() {
+        return "List files and folders of your google drive";
+    }
+
+    @Override
+    public String getUsageInfo() {
+        return PROGRAMM_NAME + " " + this.getCommandName() + "[DIR]";
+    }
 }

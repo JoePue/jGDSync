@@ -24,4 +24,18 @@ public class InitCheckCommand implements Command {
         }
         return SUCCESS;
     }
+
+    public String getCommandName() {
+        return INITCHECK;
+    }
+
+    @Override
+    public String getHelpInfo() {
+        return "";
+    }
+
+    @Override
+    public String getUsageInfo() {
+        return "";
+    }
 }
