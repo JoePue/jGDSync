@@ -7,10 +7,27 @@ import de.puettner.jgdsync.model.SyncData;
 import java.util.List;
 
 import static java.lang.System.out;
+import static java.text.MessageFormat.format;
 
 public class ConsolePrinter {
 
     public ConsolePrinter() {
+    }
+
+    public static void error(String s) {
+        out.println("[Error] " + s);
+    }
+
+    public static void errorf(String s, Object... args) {
+        printf("[Error] " + s, args);
+    }
+
+    public static void printf(String s, Object... args) {
+        out.println(format(s, args));
+    }
+
+    public static void println(String s) {
+        out.println(s);
     }
 
     public void printNodeList(Node<SyncData> nodeList) {
@@ -58,9 +75,5 @@ public class ConsolePrinter {
         } else {
             return name;
         }
-    }
-
-    public void error(String s) {
-        out.println("[Error] " + s);
     }
 }

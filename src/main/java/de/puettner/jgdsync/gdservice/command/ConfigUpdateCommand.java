@@ -22,17 +22,17 @@ public class ConfigUpdateCommand implements Command {
         return SUCCESS;
     }
 
-    public String getCommandName() {
-        return CONFIGUPDATE;
-    }
-
-    public String getHelpInfo() {
-        return "";
+    public String getCommandExplanation() {
+        return "Allows you to reload your configuration from config file. Its only relevant for CLI mode.";
     }
 
     @Override
     public String getUsageInfo() {
         return PROGRAMM_NAME + " " + this.getCommandName() + "";
+    }
+
+    public String getCommandName() {
+        return CONFIGUPDATE;
     }
 
     public AppConfig getAppConfig() {

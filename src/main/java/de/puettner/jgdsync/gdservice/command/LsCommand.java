@@ -8,8 +8,8 @@ import lombok.extern.java.Log;
 
 import java.util.Optional;
 
-import static de.puettner.jgdsync.gdservice.MessagePrinter.out;
 import static de.puettner.jgdsync.gdservice.command.CommandResult.SUCCESS;
+import static java.text.MessageFormat.format;
 
 @Log
 public class LsCommand implements Command {
@@ -27,7 +27,7 @@ public class LsCommand implements Command {
         boolean recursive = args.containsFlag("-r");
         Optional<String> firstParameter = args.getFirstParameter();
 
-        log.info(out("execute() firstParameter: {0}, recursive: {1}", firstParameter, recursive));
+        log.info(format("execute() firstParameter: {0}, recursive: {1}", firstParameter, recursive));
         if (!firstParameter.isPresent()) {
             result = service.listRootFolder();
         } else {
@@ -47,17 +47,17 @@ public class LsCommand implements Command {
         return SUCCESS;
     }
 
-    public String getCommandName() {
-        return LS;
-    }
-
     @Override
-    public String getHelpInfo() {
+    public String getCommandExplanation() {
         return "List files and folders of your google drive";
     }
 
     @Override
     public String getUsageInfo() {
-        return PROGRAMM_NAME + " " + this.getCommandName() + "[DIR]";
+        return PROGRAMM_NAME + " " + this.getCommandName() + " [DIR]";
+    }
+
+    public String getCommandName() {
+        return LS;
     }
 }

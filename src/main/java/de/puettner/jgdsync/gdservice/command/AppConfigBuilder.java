@@ -11,7 +11,7 @@ import java.io.File;
 import java.util.Collections;
 
 import static de.puettner.jgdsync.AppConstants.CONFIG_FILE;
-import static de.puettner.jgdsync.gdservice.MessagePrinter.out;
+import static java.text.MessageFormat.format;
 
 @Log
 public class AppConfigBuilder {
@@ -41,15 +41,15 @@ public class AppConfigBuilder {
 
     public static boolean validate(AppConfig appConfig) {
         if (appConfig == null) {
-            log.severe(out("Invalid config"));
+            log.severe(format("Invalid config"));
             return false;
         }
         if (appConfig.getGdFolderId() == null || appConfig.getGdFolderId().isEmpty()) {
-            log.severe(out("Invalid property " + GD_FOLDER_ID));
+            log.severe(format("Invalid property " + GD_FOLDER_ID));
             return false;
         }
         if (appConfig.getLclIgnoreFolders() == null) {
-            log.severe(out("Invalid property" + LCL_FOLDER_IGNORE));
+            log.severe(format("Invalid property" + LCL_FOLDER_IGNORE));
             return false;
         }
         return true;

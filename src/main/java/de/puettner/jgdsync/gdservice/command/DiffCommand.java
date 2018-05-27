@@ -36,18 +36,18 @@ public class DiffCommand implements Command {
     }
 
     @Override
-    public String getCommandName() {
-        return DIFF;
-    }
-
-    @Override
-    public String getHelpInfo() {
-        return "";
+    public String getCommandExplanation() {
+        return "Shows the differences between your local and remote folder.";
     }
 
     @Override
     public String getUsageInfo() {
         return PROGRAMM_NAME + " " + this.getCommandName() + "";
+    }
+
+    @Override
+    public String getCommandName() {
+        return DIFF;
     }
 
     private void diffFolder(Node<SyncData> node) {

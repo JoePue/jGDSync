@@ -10,16 +10,19 @@ public interface Command {
     String CONFIGUPDATE = "configupdate";
     String DIFF = "diff";
     String DOWNLOAD = "download";
+    String HELP = "help";
 
     CommandResult execute(CommandArgs arguments);
 
-    String getHelpInfo();
+    String getCommandExplanation();
 
-    String getUsageInfo();
+    default String getUsageInfo() {
+        return PROGRAMM_NAME + " " + this.getCommandName();
+    }
+
+    String getCommandName();
 
     default boolean isExecutable(CommandArgs arguments) {
         return this.getCommandName().equalsIgnoreCase(arguments.getCommand());
     }
-
-    String getCommandName();
 }
