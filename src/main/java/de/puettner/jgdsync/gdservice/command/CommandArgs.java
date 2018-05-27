@@ -20,12 +20,16 @@ public class CommandArgs {
         this.list = Arrays.asList(args);
     }
 
-    public Optional<String> getFirstParameter() {
-        return getParameter(1);
+    public String getCommand() {
+        return getParameter(0).get();
     }
 
     private Optional<String> getParameter(int position) {
         return this.list.stream().skip(position).filter(item -> !item.startsWith("-")).findFirst();
+    }
+
+    public Optional<String> getFirstParameter() {
+        return getParameter(1);
     }
 
     public Optional<String> getSecondParameter() {

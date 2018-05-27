@@ -13,9 +13,13 @@ public interface Command {
 
     CommandResult execute(CommandArgs arguments);
 
-    String getCommandName();
-
     String getHelpInfo();
 
     String getUsageInfo();
+
+    default boolean isExecutable(CommandArgs arguments) {
+        return this.getCommandName().equalsIgnoreCase(arguments.getCommand());
+    }
+
+    String getCommandName();
 }

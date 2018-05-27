@@ -5,6 +5,9 @@ import de.puettner.jgdsync.gdservice.SyncServiceBuilder;
 import de.puettner.jgdsync.gdservice.console.ConsolePrinter;
 import lombok.extern.java.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static de.puettner.jgdsync.gdservice.MessagePrinter.out;
 
 /**
@@ -13,16 +16,16 @@ import static de.puettner.jgdsync.gdservice.MessagePrinter.out;
 @Log
 public class CommandExecutor {
 
-    private final InitCheckCommand initCheckCommand = new InitCheckCommand();
-    private final TestDebugLogsCommand debugLogsCommand = new TestDebugLogsCommand();
     private final ConsolePrinter consolePrinter;
+    private final List<Command> commandList = new ArrayList<>();
+    private InitCheckCommand initCheckCommand;
+    private TestDebugLogsCommand debugLogsCommand;
     private SyncService service;
     private AppConfig appConfig;
     private boolean isAppConfigurationCorrect = false;
+    private ConfigUpdateCommand configUpdateCommand;
 
     public CommandExecutor() {
-        log.fine("test");
-        log.severe("severe");
         consolePrinter = new ConsolePrinter();
     }
 
@@ -31,6 +34,22 @@ public class CommandExecutor {
         if (!AppConfigBuilder.validate(appConfig)) {
             out("App configuration is invalid");
         }
+
+        initCommandList();
+        initCheck();
+    }
+
+    private void initCommandList() {
+        this.initCheckCommand = new InitCheckCommand();
+        this.service = SyncServiceBuilder.build(appConfig);
+        this.commandList.add(new LsCommand(consolePrinter, service));
+        this.commandList.add(new DiffCommand(consolePrinter, service, appConfig));
+        this.commandList.add(new TestDebugLogsCommand());
+        this.commandList.add(new ConfigUpdateCommand(service));
+
+    }
+
+    private void initCheck() {
         CommandResult cmdResult = initCheckCommand.execute(null);
         if (cmdResult.isProcessed() && cmdResult.isSuccessful()) {
             this.isAppConfigurationCorrect = true;
@@ -47,36 +66,19 @@ public class CommandExecutor {
                 cmdResult = initCheckCommand.execute(commandArguments);
                 if (cmdResult.isProcessed() && cmdResult.isSuccessful()) {
                     isAppConfigurationCorrect = true;
+                    cmdResult = null;
                 }
-            }
-            if (Command.TESTDEBUGLOGS.equalsIgnoreCase(cmd)) {
-                debugLogsCommand.execute(commandArguments);
             }
             if (isAppConfigurationCorrect) {
-                initializedService();
-                if (Command.LS.equalsIgnoreCase(cmd)) {
-                    new LsCommand(consolePrinter, service).execute(commandArguments);
-                }
-                if (Command.DIFF.equalsIgnoreCase(cmd)) {
-                    new DiffCommand(consolePrinter, service, appConfig).execute(commandArguments);
-                }
-                if (Command.CONFIGUPDATE.equalsIgnoreCase(cmd)) {
-                    ConfigUpdateCommand configUpdateCommand = new ConfigUpdateCommand(service);
-                    service.setAppConfig(configUpdateCommand.getAppConfig());
-                    configUpdateCommand.execute(commandArguments);
+                for (Command command : commandList) {
+                    if (command.isExecutable(commandArguments)) {
+                        cmdResult = command.execute(commandArguments);
+                    }
                 }
             }
-            if (!cmdResult.isProcessed()) {
+            if (cmdResult == null || !cmdResult.isProcessed()) {
                 out("Unknown command");
             }
         }
-    }
-
-
-    private SyncService initializedService() {
-        if (this.service == null) {
-            this.service = SyncServiceBuilder.build(appConfig);
-        }
-        return this.service;
     }
 }
