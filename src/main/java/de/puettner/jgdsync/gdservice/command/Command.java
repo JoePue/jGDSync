@@ -5,6 +5,7 @@ public interface Command {
     String PROGRAMM_NAME = "jgdsync";
     String LS = "ls";
     String TESTDEBUGLOGS = "testdebuglogs";
+    String INIT = "init";
     String INITCHECK = "initcheck";
     String INITSYNC = "syncinit";
     String CONFIGUPDATE = "configupdate";

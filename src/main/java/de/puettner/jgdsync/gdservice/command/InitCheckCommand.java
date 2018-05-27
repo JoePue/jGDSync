@@ -28,6 +28,10 @@ public class InitCheckCommand implements Command {
             consolePrinter.errorf("Missing file ''{0}''. Use {1}", CONFIG_FILE, Command.INITSYNC);
             return CommandResult.builder().processed(true).successful(false).build();
         }
+        if (!(DOWNLOAD_DIR.exists())) {
+            consolePrinter.errorf("Missing directory ''{0}''", DOWNLOAD_DIR.getAbsolutePath());
+            return CommandResult.builder().processed(true).successful(false).build();
+        }
         return SUCCESS;
     }
 
@@ -38,7 +42,7 @@ public class InitCheckCommand implements Command {
 
     @Override
     public String getUsageInfo() {
-        return "";
+        return PROGRAMM_NAME + " " + this.getCommandName() + "";
     }
 
     public String getCommandName() {

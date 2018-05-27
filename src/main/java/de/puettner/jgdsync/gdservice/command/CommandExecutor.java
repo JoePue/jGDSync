@@ -1,5 +1,6 @@
 package de.puettner.jgdsync.gdservice.command;
 
+import com.google.common.collect.Lists;
 import de.puettner.jgdsync.gdservice.SyncService;
 import de.puettner.jgdsync.gdservice.SyncServiceBuilder;
 import de.puettner.jgdsync.gdservice.console.ConsolePrinter;
@@ -18,13 +19,12 @@ import static java.text.MessageFormat.format;
 public class CommandExecutor {
 
     private final ConsolePrinter consolePrinter;
-    private final List<Command> commandList = new ArrayList<>();
+    private final List<Command> commandListWithoutInitCheck = new ArrayList<>();
+    private final List<Command> commandListWithInitCheck = new ArrayList<>();
     private InitCheckCommand initCheckCommand;
-    private TestDebugLogsCommand debugLogsCommand;
     private SyncService service;
     private AppConfig appConfig;
     private boolean isAppConfigurationCorrect = false;
-    private ConfigUpdateCommand configUpdateCommand;
     private HelpCommand helpCommand;
 
     public CommandExecutor() {
@@ -37,20 +37,35 @@ public class CommandExecutor {
             error("App configuration is invalid");
         }
 
-        initCommandList();
-        initCheck();
+        initCommandListWithInitCheck();
+        initCommandListWithoutInitCheck();
     }
 
-    private void initCommandList() {
-        this.initCheckCommand = new InitCheckCommand(consolePrinter);
+    /**
+     * Befehle die eine initialisierte Anwenundung benötigen
+     */
+    private void initCommandListWithInitCheck() {
         this.service = SyncServiceBuilder.build(appConfig);
 
-        this.helpCommand = new HelpCommand(consolePrinter, this.commandList);
-        this.commandList.add(new LsCommand(consolePrinter, service));
-        this.commandList.add(new DiffCommand(consolePrinter, service, appConfig));
-        this.commandList.add(new TestDebugLogsCommand());
-        this.commandList.add(new ConfigUpdateCommand(service));
-        this.commandList.add(helpCommand);
+        this.commandListWithInitCheck.add(new LsCommand(consolePrinter, service));
+        this.commandListWithInitCheck.add(new DiffCommand(consolePrinter, service, appConfig));
+//        this.commandListWithInitCheck.add(new DownloadCommand(consolePrinter, service));
+    }
+
+    /**
+     * Befehle die keine initialisierte Anwenundung benötigen.
+     */
+    private void initCommandListWithoutInitCheck() {
+        ArrayList<Command> commandList = Lists.newArrayList(this.commandListWithInitCheck);
+        commandList.addAll(this.commandListWithoutInitCheck);
+
+        this.initCheckCommand = new InitCheckCommand(consolePrinter);
+        this.helpCommand = new HelpCommand(consolePrinter, commandList);
+
+        this.commandListWithoutInitCheck.add(helpCommand);
+        this.commandListWithoutInitCheck.add(new InitCommand(consolePrinter));
+        this.commandListWithoutInitCheck.add(new InitCheckCommand(consolePrinter));
+        this.commandListWithInitCheck.add(new TestDebugLogsCommand());
     }
 
     private void initCheck() {
@@ -66,31 +81,24 @@ public class CommandExecutor {
             return;
         }
         final CommandArgs commandArguments = new CommandArgs(args);
-        CommandResult cmdResult = initCheckCommand.execute(commandArguments);
-        if (cmdResult.isSuccessful()) {
-            cmdResult = null;
-            for (String cmd : args) {
-                log.info("processCmdOptions");
-                if (Command.INITCHECK.equalsIgnoreCase(cmd)) {
-                    cmdResult = initCheckCommand.execute(commandArguments);
-                    if (cmdResult.isProcessed() && cmdResult.isSuccessful()) {
-                        isAppConfigurationCorrect = true;
-                        cmdResult = null;
-                    }
-                }
+        CommandResult cmdResult = null;
+
+        for (Command command : commandListWithoutInitCheck) {
+            if (command.isExecutable(commandArguments)) {
+                command.execute(commandArguments);
             }
-            if (isAppConfigurationCorrect) {
-                for (Command command : commandList) {
-                    if (command.isExecutable(commandArguments)) {
-                        cmdResult = command.execute(commandArguments);
-                    }
+        }
+
+        cmdResult = initCheckCommand.execute(null);
+        if (cmdResult.isProcessed() && cmdResult.isSuccessful()) {
+            for (Command command : commandListWithInitCheck) {
+                if (command.isExecutable(commandArguments)) {
+                    cmdResult = command.execute(commandArguments);
                 }
             }
             if (cmdResult == null || !cmdResult.isProcessed()) {
                 error("Unknown command ");
             }
-        } else {
-            error("Init check failed.");
         }
     }
 }
