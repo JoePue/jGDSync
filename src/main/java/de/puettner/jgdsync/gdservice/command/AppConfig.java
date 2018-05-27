@@ -15,12 +15,11 @@ import java.util.List;
 @Log
 public class AppConfig {
 
+    boolean cacheResponses = true;
     @Nonnull
     private File lclFolder;
     @Nonnull
     private String gdFolderId;
     @Nonnull
     private List<String> lclIgnoreFolders;
-
-    boolean cacheResponses = true;
 }

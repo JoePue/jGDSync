@@ -20,7 +20,7 @@ public class FileIgnoreFilter implements FileFilter {
     public boolean accept(File file) {
         if (!ignoreFolderList.isEmpty()) {
             String filename = getFilename(file);
-            for (String folder: ignoreFolderList) {
+            for (String folder : ignoreFolderList) {
                 if (folder.startsWith("/")) {
                     if (filename.startsWith(folder)) {
                         return false;

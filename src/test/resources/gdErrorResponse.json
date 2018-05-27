@@ -1,0 +1,15 @@
+{
+  "error": {
+    "errors": [
+      {
+        "domain": "global",
+        "reason": "appNotAuthorizedToFile",
+        "message": "The user has not granted the app 886573689157 read access to the file 1Vr5S-kAiWIhbSBHnrrnrCGxO506bDbEP.",
+        "locationType": "header",
+        "location": "Authorization"
+      }
+    ],
+    "code": 403,
+    "message": "The user has not granted the app 886573689157 read access to the file 1Vr5S-kAiWIhbSBHnrrnrCGxO506bDbEP."
+  }
+}

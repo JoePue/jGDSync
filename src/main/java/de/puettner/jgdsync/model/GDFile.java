@@ -17,6 +17,10 @@ public class GDFile {
         return DriveFileUtil.isFolder(file);
     }
 
+    public boolean canDownload() {
+        return file.getCapabilities().getCanDownload();
+    }
+
     public String getName() {
         return file.getName();
     }

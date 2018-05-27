@@ -27,7 +27,7 @@ public class InitCommand implements Command {
                 return result;
             }
         }
-        println("Folder is now initialized for synchronization.");
+        println("Initialization complete.");
         return SUCCESS;
     }
 

@@ -1,11 +1,12 @@
 package de.puettner.jgdsync;
 
-import de.puettner.jgdsync.gdservice.command.Command;
 import de.puettner.jgdsync.gdservice.command.CommandExecutor;
 import lombok.extern.java.Log;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static de.puettner.jgdsync.gdservice.console.ConsolePrinter.errorf;
 
 /**
  * https://developers.google.com/drive/v2/web/quickstart/java C:\Users\joerg.puettner\.credentials
@@ -22,15 +23,22 @@ public class Main {
         log.info("main()");
         List<String[]> commandList = new ArrayList<>();
         if (System.getProperty("app.profiles.active").equals("DEV")) {
-            //            commandList.add(new String[]{Command.LS, "-r", "test-sync-dir"});
-//            commandList.add(new String[]{Command.DIFF});
+            //        commandList.add(new String[]{Command.LS, "-r", "test-sync-dir"});
+            //        commandList.add(new String[]{Command.DIFF});
         }
         commandList.add(args);
 
         CommandExecutor commandExecutor = new CommandExecutor();
         for (String[] command : commandList) {
             commandExecutor.init();
-            commandExecutor.processCmdOptions(command);
+            try {
+                commandExecutor.processCmdOptions(command);
+            } catch (Exception e) {
+                //                if (AppEnvironment.isDevMode()) {
+                //                    e.printStackTrace();
+                //                }
+                errorf("An error occurred at command execution. error: {0}", e.getMessage());
+            }
         }
     }
 }

@@ -49,7 +49,6 @@ public class CommandExecutor {
 
         this.commandListWithInitCheck.add(new LsCommand(consolePrinter, service));
         this.commandListWithInitCheck.add(new DiffCommand(consolePrinter, service, appConfig));
-//        this.commandListWithInitCheck.add(new DownloadCommand(consolePrinter, service));
     }
 
     /**
@@ -66,13 +65,6 @@ public class CommandExecutor {
         this.commandListWithoutInitCheck.add(new InitCommand(consolePrinter));
         this.commandListWithoutInitCheck.add(new InitCheckCommand(consolePrinter));
         this.commandListWithInitCheck.add(new TestDebugLogsCommand());
-    }
-
-    private void initCheck() {
-        CommandResult cmdResult = initCheckCommand.execute(null);
-        if (cmdResult.isProcessed() && cmdResult.isSuccessful()) {
-            this.isAppConfigurationCorrect = true;
-        }
     }
 
     public void processCmdOptions(String[] args) {

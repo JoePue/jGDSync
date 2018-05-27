@@ -35,7 +35,7 @@ public class SyncData {
 
 
     @Override
-    public int hashCode(){
+    public int hashCode() {
         return absoluteName.hashCode();
     }
 

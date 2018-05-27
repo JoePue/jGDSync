@@ -1,7 +1,7 @@
 package de.puettner.jgdsync.gdservice;
 
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.model.FileList;
+import de.puettner.jgdsync.AppConstants;
 import lombok.extern.java.Log;
 import org.apache.commons.io.FileUtils;
 
@@ -15,32 +15,14 @@ import static de.puettner.jgdsync.AppConstants.CACHE_DIR;
 @Log
 public class CacheService {
 
-    public static final String UTF_8 = "UTF-8";
-    private JacksonFactory factory = JacksonFactory.getDefaultInstance();
-
     protected FileList getCachedFileList(int callStackIdx, int hashCode) {
         log.fine("getCachedFileList");
         File file = createCacheFile(++callStackIdx, hashCode);
         if (file.exists()) {
             try {
-                String content = FileUtils.readFileToString(file, Charset.forName(UTF_8));
+                String content = FileUtils.readFileToString(file, Charset.forName(AppConstants.UTF_8));
                 log.finer("Using Cache for " + file.getName());
-                return factory.createJsonParser(content).parse(FileList.class);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return null;
-    }
-
-    protected com.google.api.services.drive.model.File getCachedFile(int callStackIdx, int hashCode) {
-        log.fine("getCachedFile");
-        File file = createCacheFile(++callStackIdx, hashCode);
-        if (file.exists()) {
-            try {
-                String content = FileUtils.readFileToString(file, Charset.forName(UTF_8));
-                log.finer("Using Cache for " + file.getName());
-                return factory.createJsonParser(content).parse(com.google.api.services.drive.model.File.class);
+                return JacksonFactoryUtil.parseFileList(content);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -53,10 +35,26 @@ public class CacheService {
         return new java.io.File(CACHE_DIR + File.separator + methodName + "_" + hashCode + ".json");
     }
 
+    protected com.google.api.services.drive.model.File getCachedFile(int callStackIdx, int hashCode) {
+        log.fine("getCachedFile");
+        File file = createCacheFile(++callStackIdx, hashCode);
+        if (file.exists()) {
+            try {
+                String content = FileUtils.readFileToString(file, Charset.forName(AppConstants.UTF_8));
+                log.finer("Using Cache for " + file.getName());
+                return JacksonFactoryUtil.parseFile(content);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
     protected <T extends com.google.api.client.json.GenericJson> T cacheResponse(T result, int callStackIdx, int hashCode) {
         log.fine(new Object() {}.getClass().getEnclosingMethod().getName());
         try {
-            FileUtils.write((createCacheFile(++callStackIdx, hashCode)), factory.toPrettyString(result), Charset.forName(UTF_8), false);
+            FileUtils.write((createCacheFile(++callStackIdx, hashCode)), JacksonFactoryUtil.toPrettyString(result), Charset.forName
+                    (AppConstants.UTF_8), false);
         } catch (IOException e) {
             log.log(Level.SEVERE, e.getMessage(), e);
         }

@@ -14,22 +14,22 @@ public class ConsolePrinter {
     public ConsolePrinter() {
     }
 
+    public static String printf(String s, Object... args) {
+        return println(format(s, args));
+    }
+
     public static String println(String s) {
         out.println(s);
         return s;
     }
 
-    public static String printf(String s, Object... args) {
-        return println(format(s, args));
+    public static String errorf(String s, Object... args) {
+        return error(format(s, args));
     }
 
     public static String error(String s) {
         String m = "[Error] " + s;
         return println(m);
-    }
-
-    public static String errorf(String s, Object... args) {
-        return error(format(s, args));
     }
 
     public void printNodeList(Node<SyncData> nodeList) {
