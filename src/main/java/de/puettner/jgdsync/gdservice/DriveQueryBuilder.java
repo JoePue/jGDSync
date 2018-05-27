@@ -7,11 +7,23 @@ import static de.puettner.jgdsync.DriveFileUtil.FOLDER_MIME_TYPE;
 @Log
 public class DriveQueryBuilder {
 
-    public static final String QUERY_ROOT_FOLDER = "'root' in parents and trashed=false and (not mimeType contains " +
+    public static final String ROOT_FOLDER_NAME = "root";
+
+    private static final String GDID_PLACEHOLDER = "__GDID__";
+
+    private static final String QUERY_FOLDER_BY_PARENT_ID = "'" + GDID_PLACEHOLDER + "' in parents and trashed=false and (not mimeType contains " +
             "'application/vnd.google-apps' or mimeType = '" + FOLDER_MIME_TYPE + "')";
 
     public static final String QUERY_ALL = "trashed=false and (not mimeType contains 'application/vnd.google-apps' " +
             "or mimeType = '" + FOLDER_MIME_TYPE + "')";
+
+    public static String getQueryToListFolderByParentId(String gdId) {
+        return QUERY_FOLDER_BY_PARENT_ID.replace(GDID_PLACEHOLDER, gdId);
+    }
+
+    public static String getQueryToListRootFolder() {
+        return QUERY_FOLDER_BY_PARENT_ID.replace(GDID_PLACEHOLDER, ROOT_FOLDER_NAME);
+    }
 
     static String buildFindFolderQuery(String foldername, String folderId, String mimeType) {
         if (foldername == null && folderId == null) {

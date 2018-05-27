@@ -33,12 +33,12 @@ public class TestDebugLogsCommand implements Command {
     }
 
     @Override
-    public String getUsageInfo() {
-        return PROGRAMM_NAME + " " + this.getCommandName();
+    public String getCommandName() {
+        return TESTDEBUGLOGS;
     }
 
     @Override
-    public String getCommandName() {
-        return TESTDEBUGLOGS;
+    public boolean displayHelp() {
+        return false;
     }
 }

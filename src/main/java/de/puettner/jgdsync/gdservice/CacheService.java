@@ -15,8 +15,8 @@ import static de.puettner.jgdsync.AppConstants.CACHE_DIR;
 @Log
 public class CacheService {
 
-    protected FileList getCachedFileList(int callStackIdx, int hashCode) {
-        log.fine("getCachedFileList");
+    protected FileList getCachedResponse(int callStackIdx, int hashCode) {
+        log.fine("getCachedResponse");
         File file = createCacheFile(++callStackIdx, hashCode);
         if (file.exists()) {
             try {

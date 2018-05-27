@@ -12,7 +12,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.DriveScopes;
-import de.puettner.jgdsync.AppException;
+import de.puettner.jgdsync.exception.AppUnexpectedException;
 import de.puettner.jgdsync.gdservice.command.CommandExecutor;
 import lombok.extern.java.Log;
 
@@ -40,7 +40,7 @@ public class DriveBuilder {
      * <p>
      * If modifying these scopes, delete your previously saved credentials at ~/.credentials/jGDSync
      */
-    private static final List<String> SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE);
+    private static final List<String> SCOPES = Arrays.asList(DriveScopes.DRIVE);
     /** Global instance of the {@link FileDataStoreFactory}. */
     private static FileDataStoreFactory DATA_STORE_FACTORY;
     /** Global instance of the HTTP transport. */
@@ -67,7 +67,7 @@ public class DriveBuilder {
         try {
             credential = authorize();
         } catch (IOException e) {
-            throw new AppException(e);
+            throw new AppUnexpectedException(e);
         }
         return new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential).setApplicationName(APPLICATION_NAME).build();
     }

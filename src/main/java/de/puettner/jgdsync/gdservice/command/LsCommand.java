@@ -6,6 +6,8 @@ import de.puettner.jgdsync.model.Node;
 import de.puettner.jgdsync.model.SyncData;
 import lombok.extern.java.Log;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static de.puettner.jgdsync.gdservice.command.CommandResult.SUCCESS;
@@ -29,10 +31,10 @@ public class LsCommand implements Command {
 
         log.info(format("execute() firstParameter: {0}, recursive: {1}", firstParameter, recursive));
         if (!firstParameter.isPresent()) {
-            result = service.listRootFolder();
+            result = service.listRootFolderForSync();
         } else {
             if ("/".equals(firstParameter)) {
-                result = service.listRootFolder();
+                result = service.listRootFolderForSync();
             } else {
                 Node<SyncData> node = service.findFolderByName(firstParameter.get());
                 if (node.getChildren().size() != 1) {
@@ -53,8 +55,10 @@ public class LsCommand implements Command {
     }
 
     @Override
-    public String getUsageInfo() {
-        return PROGRAMM_NAME + " " + this.getCommandName() + " [DIR]";
+    public List<String> getUsageInfo() {
+        List<String> list = new ArrayList<>();
+        list.add(PROGRAMM_NAME + " " + this.getCommandName() + " [DIR]");
+        return list;
     }
 
     public String getCommandName() {

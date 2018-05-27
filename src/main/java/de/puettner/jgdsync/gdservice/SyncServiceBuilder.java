@@ -20,7 +20,9 @@ public class SyncServiceBuilder {
         SyncData ROOT_SYNC_NODE = SyncNodeFactory.getInstance(appConfig.getLclFolder(), fileIgnoreFilter).construct(new File("."));
         final Node<SyncData> rootNode = new Node<>(ROOT_SYNC_NODE, true);
 
+        LocalFileService lclFileSrv = new LocalFileService();
+
         DriveService driveService = new DriveService(DriveBuilder.build(), appConfig.isCacheResponses());
-        return new SyncServiceImpl(appConfig, rootNode, driveService, fileIgnoreFilter);
+        return new SyncService(appConfig, rootNode, driveService, fileIgnoreFilter, lclFileSrv);
     }
 }

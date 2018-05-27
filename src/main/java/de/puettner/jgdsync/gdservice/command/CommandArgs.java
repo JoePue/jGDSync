@@ -5,6 +5,7 @@ import lombok.Data;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Data
 public class CommandArgs {
@@ -24,6 +25,10 @@ public class CommandArgs {
         return getParameter(0).get();
     }
 
+    private List<String> getFlags() {
+        return this.list.stream().skip(1).filter(item -> item.startsWith("-")).collect(Collectors.toList());
+    }
+
     private Optional<String> getParameter(int position) {
         return this.list.stream().skip(position).filter(item -> !item.startsWith("-")).findFirst();
     }
@@ -33,7 +38,7 @@ public class CommandArgs {
     }
 
     public Optional<String> getSecondParameter() {
-        return getParameter(2);
+        return this.list.stream().skip(1).filter(item -> !item.startsWith("-")).skip(1).findFirst();
     }
 
     boolean containsFlag(String argument) {

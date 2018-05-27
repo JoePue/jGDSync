@@ -46,12 +46,12 @@ public class InitCommand implements Command {
         return "set up actual directory as synchronizable with a your Google Drive";
     }
 
-    @Override
-    public String getUsageInfo() {
-        return PROGRAMM_NAME + " " + this.getCommandName() + "";
-    }
-
     public String getCommandName() {
         return INIT;
+    }
+
+    @Override
+    public boolean displayHelp() {
+        return false;
     }
 }

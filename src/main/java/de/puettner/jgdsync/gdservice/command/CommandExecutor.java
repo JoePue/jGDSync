@@ -38,7 +38,7 @@ public class CommandExecutor {
         }
 
         initCommandListWithInitCheck();
-        initCommandListWithoutInitCheck();
+        initStandaloneCommands();
     }
 
     /**
@@ -47,24 +47,25 @@ public class CommandExecutor {
     private void initCommandListWithInitCheck() {
         this.service = SyncServiceBuilder.build(appConfig);
 
-        this.commandListWithInitCheck.add(new LsCommand(consolePrinter, service));
         this.commandListWithInitCheck.add(new DiffCommand(consolePrinter, service, appConfig));
     }
 
     /**
      * Befehle die keine initialisierte Anwenundung benötigen.
      */
-    private void initCommandListWithoutInitCheck() {
+    private void initStandaloneCommands() {
         ArrayList<Command> commandList = Lists.newArrayList(this.commandListWithInitCheck);
-        commandList.addAll(this.commandListWithoutInitCheck);
 
         this.initCheckCommand = new InitCheckCommand(consolePrinter);
         this.helpCommand = new HelpCommand(consolePrinter, commandList);
 
+        this.commandListWithoutInitCheck.add(new LsCommand(consolePrinter, service));
         this.commandListWithoutInitCheck.add(helpCommand);
         this.commandListWithoutInitCheck.add(new InitCommand(consolePrinter));
         this.commandListWithoutInitCheck.add(new InitCheckCommand(consolePrinter));
-        this.commandListWithInitCheck.add(new TestDebugLogsCommand());
+        this.commandListWithoutInitCheck.add(new TestDebugLogsCommand());
+        this.commandListWithoutInitCheck.add(new DownloadCommand(consolePrinter, service));
+        commandList.addAll(this.commandListWithoutInitCheck);
     }
 
     public void processCmdOptions(String[] args) {

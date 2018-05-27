@@ -26,16 +26,16 @@ public class ConfigUpdateCommand implements Command {
         return "Allows you to reload your configuration from config file. Its only relevant for CLI mode.";
     }
 
-    @Override
-    public String getUsageInfo() {
-        return PROGRAMM_NAME + " " + this.getCommandName() + "";
-    }
-
     public String getCommandName() {
         return CONFIGUPDATE;
     }
 
     public AppConfig getAppConfig() {
         return appConfig;
+    }
+
+    @Override
+    public boolean displayHelp() {
+        return false;
     }
 }

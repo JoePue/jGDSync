@@ -40,12 +40,12 @@ public class InitCheckCommand implements Command {
         return "";
     }
 
-    @Override
-    public String getUsageInfo() {
-        return PROGRAMM_NAME + " " + this.getCommandName() + "";
-    }
-
     public String getCommandName() {
         return INITCHECK;
+    }
+
+    @Override
+    public boolean displayHelp() {
+        return false;
     }
 }

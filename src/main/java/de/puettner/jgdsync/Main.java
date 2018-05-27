@@ -22,7 +22,7 @@ public class Main {
     public static void main(String[] args) {
         log.info("main()");
         List<String[]> commandList = new ArrayList<>();
-        if (System.getProperty("app.profiles.active").equals("DEV")) {
+        if (System.getProperty("app.profiles.active", "").equals("DEV")) {
             //        commandList.add(new String[]{Command.LS, "-r", "test-sync-dir"});
             //        commandList.add(new String[]{Command.DIFF});
         }
@@ -34,10 +34,8 @@ public class Main {
             try {
                 commandExecutor.processCmdOptions(command);
             } catch (Exception e) {
-                //                if (AppEnvironment.isDevMode()) {
-                //                    e.printStackTrace();
-                //                }
-                errorf("An error occurred at command execution. error: {0}", e.getMessage());
+                e.printStackTrace();
+                errorf("An error occurred while command execution. error: {0}", e.getMessage());
             }
         }
     }

@@ -4,8 +4,9 @@ import com.google.api.client.json.GenericJson;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
-import de.puettner.jgdsync.AppException;
+import de.puettner.jgdsync.exception.AppUnexpectedException;
 import de.puettner.jgdsync.model.GDErrorResponse;
+import de.puettner.jgdsync.model.GDTokenResponseError;
 
 import java.io.IOException;
 
@@ -29,7 +30,16 @@ public abstract class JacksonFactoryUtil {
         try {
             return factory.createJsonParser(content).parse(GDErrorResponse.class);
         } catch (IOException e) {
-            throw new AppException(e);
+            throw new AppUnexpectedException(e);
         }
     }
+
+    public static GDTokenResponseError parseGDTokenResponseException(String content) {
+        try {
+            return factory.createJsonParser(content).parse(GDTokenResponseError.class);
+        } catch (IOException e) {
+            throw new AppUnexpectedException(e);
+        }
+    }
+
 }

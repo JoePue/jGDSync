@@ -1,5 +1,9 @@
 package de.puettner.jgdsync.gdservice.command;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 public interface Command {
 
     String PROGRAMM_NAME = "jgdsync";
@@ -17,13 +21,19 @@ public interface Command {
 
     String getCommandExplanation();
 
-    default String getUsageInfo() {
-        return PROGRAMM_NAME + " " + this.getCommandName();
+    default List<String> getUsageInfo() {
+        List<String> list = new ArrayList<>();
+        list.add(PROGRAMM_NAME + " " + this.getCommandName());
+        return list;
     }
 
     String getCommandName();
 
     default boolean isExecutable(CommandArgs arguments) {
         return this.getCommandName().equalsIgnoreCase(arguments.getCommand());
+    }
+
+    default boolean displayHelp() {
+        return true;
     }
 }

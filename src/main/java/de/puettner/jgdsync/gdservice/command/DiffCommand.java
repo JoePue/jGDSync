@@ -41,11 +41,6 @@ public class DiffCommand implements Command {
     }
 
     @Override
-    public String getUsageInfo() {
-        return PROGRAMM_NAME + " " + this.getCommandName() + "";
-    }
-
-    @Override
     public String getCommandName() {
         return DIFF;
     }
@@ -58,5 +53,10 @@ public class DiffCommand implements Command {
         if (!(syncData.getFile().isDirectory() && syncData.getGdFile().isFolder())) {
             throw new IllegalStateException();
         }
+    }
+
+    @Override
+    public boolean displayHelp() {
+        return false;
     }
 }

@@ -3,6 +3,7 @@ package de.puettner.jgdsync.gdservice.command;
 import de.puettner.jgdsync.gdservice.console.ConsolePrinter;
 import lombok.extern.java.Log;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
 
@@ -33,10 +34,18 @@ public class HelpCommand implements Command {
 
     public CommandResult execute(CommandArgs args) {
         println("Command line list:");
-        commandList.stream().filter(cmd -> startsWithPredicate.test(cmd, args)).forEach(cmd -> {
+        commandList.stream().filter(cmd -> cmd.displayHelp()).filter(cmd -> startsWithPredicate.test(cmd, args)).forEach(cmd -> {
             println(cmd.getCommandName());
             println(format("\t{0}", cmd.getCommandExplanation()));
-            println(format("\tUsage: {0}", cmd.getUsageInfo()));
+            if (cmd.getUsageInfo() != null) {
+                for (int i = 0; i < cmd.getUsageInfo().size(); ++i) {
+                    if (i == 0) {
+                        println(format("\tUsage: {0}", cmd.getUsageInfo().get(0)));
+                    } else {
+                        println(format("\t{0}", cmd.getUsageInfo().get(i)));
+                    }
+                }
+            }
             println("");
         });
         println("");
@@ -49,8 +58,10 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public String getUsageInfo() {
-        return PROGRAMM_NAME + " " + this.getCommandName() + "";
+    public List<String> getUsageInfo() {
+        List<String> list = new ArrayList<>();
+        list.add(PROGRAMM_NAME + " " + this.getCommandName());
+        return list;
     }
 
     public String getCommandName() {

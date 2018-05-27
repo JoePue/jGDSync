@@ -1,6 +1,7 @@
 group 'de.puettner'
 version '1.0-SNAPSHOT'
 buildDir = 'target'
+mainClassName  = 'de.puettner.jgdsync.Main'
 
 apply plugin: 'java'
 apply plugin: 'application'
@@ -8,7 +9,7 @@ apply plugin: 'application'
 //create a single Jar with all dependencies
 task fatJar(type: Jar) {
     manifest {
-        attributes 'Implementation-Title': 'Gradle Jar File Example',
+        attributes 'Implementation-Title': 'Gradle Jar File',
                 'Implementation-Version': version,
                 'Main-Class': 'de.puettner.jgdsync.Main'
     }
@@ -16,6 +17,7 @@ task fatJar(type: Jar) {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }
+
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
